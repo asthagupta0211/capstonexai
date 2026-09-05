@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { AiValidator } from '../ai/validator.js';
-import { GeneratedIdeaSchema } from '../ai/schemas/idea.schema.js';
 import { z } from 'zod';
 
 describe('AiValidator', () => {
@@ -22,6 +21,21 @@ describe('AiValidator', () => {
     expect(res.success).toBe(true);
     expect(res.data?.title).toBe('AI Sentinel');
     expect(res.data?.score).toBe(95);
+  });
+
+  it('unwraps array-wrapped objects automatically when schema expects an object', () => {
+    const schema = z.object({ title: z.string(), score: z.number() });
+    const res = AiValidator.validate('[{"title": "AI Sentinel", "score": 95}]', schema);
+    expect(res.success).toBe(true);
+    expect(res.data?.title).toBe('AI Sentinel');
+    expect(res.data?.score).toBe(95);
+  });
+
+  it('unwraps nested wrapper keys like plan or blueprint automatically', () => {
+    const schema = z.object({ title: z.string(), score: z.number() });
+    const res = AiValidator.validate('{"blueprint": {"title": "AI Sentinel", "score": 95}}', schema);
+    expect(res.success).toBe(true);
+    expect(res.data?.title).toBe('AI Sentinel');
   });
 
   it('rejects invalid JSON structure gracefully without throwing unhandled exceptions', () => {

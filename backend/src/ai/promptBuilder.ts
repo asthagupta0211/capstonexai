@@ -71,7 +71,7 @@ Generate 3-4 top-tier final-year capstone project ideas that maximize both feasi
     weeks: number;
   }): { system: string; user: string } {
     const system = `You are a Principal Software Architect detailing a comprehensive final-year capstone project blueprint.
-CRITICAL: You must return ONLY a raw JSON object matching EXACTLY this JSON structure with these exact keys (no markdown fences, no extra text):
+CRITICAL: You must return ONLY a single JSON object (NOT an array, must start with '{' and end with '}') matching EXACTLY this JSON structure with these exact keys (no markdown fences, no extra text):
 {
   "mustHaveFeatures": [
     { "title": "Core Module 1", "description": "Clear technical description of essential MVP feature.", "complexity": "Medium" },
