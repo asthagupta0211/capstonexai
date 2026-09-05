@@ -1,0 +1,59 @@
+# ==========================================
+# Dependencies
+# ==========================================
+node_modules/
+*/node_modules/
+**/node_modules/
+.pnp
+.pnp.js
+
+# ==========================================
+# Environment Variables & Sensitive Credentials
+# (NEVER COMMIT SENSITIVE SECRETS OR KEYS)
+# ==========================================
+.env
+.env.*
+*.env
+**/.env
+**/.env.*
+!.env.example
+
+# ==========================================
+# Production & Distribution Builds
+# ==========================================
+dist/
+*/dist/
+**/dist/
+build/
+*/build/
+**/build/
+
+# ==========================================
+# Logs & Process Telemetry
+# ==========================================
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ==========================================
+# Editor & Operating System Artifacts
+# ==========================================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ==========================================
+# Temporary & Scratch Dirs
+# ==========================================
+temp/
+scratch/
+.system_generated/
