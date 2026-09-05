@@ -4,6 +4,7 @@ import { ProfileController } from '../controllers/profile.controller.js';
 import { IdeaController } from '../controllers/idea.controller.js';
 import { PlanController } from '../controllers/plan.controller.js';
 import { MentorController } from '../controllers/mentor.controller.js';
+import { VivaController } from '../controllers/viva.controller.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { aiRateLimiter } from '../middleware/rateLimiter.js';
 import { isDbConnected } from '../config/db.js';
@@ -56,5 +57,8 @@ router.get('/plans/export/:id', requireAuth, PlanController.exportMarkdown);
 // --- AI Mentor Lab ---
 router.post('/mentor/analyze', requireAuth, aiRateLimiter, MentorController.analyze);
 router.get('/mentor/reviews', requireAuth, MentorController.list);
+
+// --- Viva Voce / Final Defense Simulator ---
+router.post('/viva/simulate', requireAuth, aiRateLimiter, VivaController.simulate);
 
 export default router;

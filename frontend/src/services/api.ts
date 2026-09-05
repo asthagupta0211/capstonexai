@@ -1,4 +1,4 @@
-import { StudentProfile, ProjectIdea, ProjectPlan, MentorReview, AuthUser } from '../types/index.js';
+import { StudentProfile, ProjectIdea, ProjectPlan, MentorReview, AuthUser, VivaDefenseResponse } from '../types/index.js';
 
 // Base URL configuration: Auto-routes to Render in production or uses VITE_API_URL
 const getApiBase = (): string => {
@@ -205,6 +205,22 @@ class ApiService {
 
   async listMentorReviews(): Promise<{ reviews: MentorReview[] }> {
     return this.request('/mentor/reviews');
+  }
+
+  // --- Viva Voce Simulator ---
+  async simulateVivaDefense(idea: {
+    title: string;
+    pitch: string;
+    intendedTech?: string;
+    targetAudience?: string;
+  }): Promise<{
+    defense: VivaDefenseResponse;
+    modelUsed: string;
+  }> {
+    return this.request('/viva/simulate', {
+      method: 'POST',
+      body: JSON.stringify(idea),
+    });
   }
 }
 

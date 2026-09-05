@@ -96,3 +96,19 @@ export interface AuthUser {
   email: string;
   name: string;
 }
+
+export interface VivaQuestion {
+  id: string;
+  question: string;
+  category: string;
+  examinerIntent: string;
+  trapToAvoid: string;
+  modelAnswer: string;
+}
+
+export interface VivaDefenseResponse {
+  overallDefenseReadinessScore: number;
+  examinerPerspectiveSummary: string;
+  criticalVulnerabilities: string[];
+  questions: VivaQuestion[];
+}

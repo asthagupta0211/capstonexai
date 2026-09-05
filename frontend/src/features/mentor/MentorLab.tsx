@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { BrainCircuit, Send, AlertTriangle, CheckCircle, ShieldAlert, Sparkles, Lightbulb, History, Zap } from 'lucide-react';
+import { BrainCircuit, Send, AlertTriangle, CheckCircle, ShieldAlert, Sparkles, Lightbulb, History, Zap, GraduationCap } from 'lucide-react';
 import { MentorReview } from '../../types/index.js';
 import { MetricMeter } from '../../components/MetricMeter.js';
 import { api } from '../../services/api.js';
+import { VivaDefenseSimulator } from '../viva/VivaDefenseSimulator.js';
 
 interface MentorLabProps {
   initialIdea?: {
@@ -46,7 +47,7 @@ export const MentorLab: React.FC<MentorLabProps> = ({ initialIdea, onClearInitia
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [currentReview, setCurrentReview] = useState<MentorReview | null>(null);
   const [pastReviews, setPastReviews] = useState<MentorReview[]>([]);
-  const [activeSubTab, setActiveSubTab] = useState<'critique' | 'history'>('critique');
+  const [activeSubTab, setActiveSubTab] = useState<'critique' | 'viva' | 'history'>('critique');
 
   useEffect(() => {
     loadPastReviews();
@@ -117,12 +118,19 @@ export const MentorLab: React.FC<MentorLabProps> = ({ initialIdea, onClearInitia
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
           <button
             className={`btn btn-sm ${activeSubTab === 'critique' ? 'btn-primary' : 'btn-secondary'}`}
             onClick={() => setActiveSubTab('critique')}
           >
             New Critique
+          </button>
+          <button
+            className={`btn btn-sm ${activeSubTab === 'viva' ? 'btn-primary' : 'btn-secondary'}`}
+            onClick={() => setActiveSubTab('viva')}
+          >
+            <GraduationCap size={14} />
+            <span>Viva Defense Simulator</span>
           </button>
           <button
             className={`btn btn-sm ${activeSubTab === 'history' ? 'btn-primary' : 'btn-secondary'}`}
@@ -171,10 +179,17 @@ export const MentorLab: React.FC<MentorLabProps> = ({ initialIdea, onClearInitia
             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>No past mentor reviews found in MongoDB Atlas.</p>
           )}
         </div>
+      ) : activeSubTab === 'viva' ? (
+        <VivaDefenseSimulator
+          initialTitle={title}
+          initialPitch={pitch}
+          initialTech={intendedTech}
+          initialAudience={targetAudience}
+        />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           {/* Submission Card */}
-          <div className="glass-card" style={{ padding: '2rem', borderTop: '3px solid var(--primary)' }}>
+          <div className="glass-card" style={{ padding: '2rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
               <div>
                 <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

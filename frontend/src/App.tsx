@@ -307,6 +307,9 @@ export const App: React.FC = () => {
                         onToggleCompare={handleToggleCompare}
                         onGoToComparison={() => setActiveTab('comparison')}
                         onAnalyzeIdea={handleAnalyzeIdeaInMentor}
+                        onVivaPrep={(idea) => {
+                          handleAnalyzeIdeaInMentor(idea);
+                        }}
                       />
                     )}
                   </>
@@ -347,6 +350,9 @@ export const App: React.FC = () => {
                     onToggleCompare={handleToggleCompare}
                     onGoToGenerator={() => setActiveTab('generator')}
                     onAnalyzeIdea={handleAnalyzeIdeaInMentor}
+                    onVivaPrep={(idea) => {
+                      handleAnalyzeIdeaInMentor(idea);
+                    }}
                   />
                 )}
               </>

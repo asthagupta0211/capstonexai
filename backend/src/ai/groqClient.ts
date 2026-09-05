@@ -5,6 +5,7 @@ import { AiValidator } from './validator.js';
 import { GeneratedIdea, GeneratedIdeasResponseSchema } from './schemas/idea.schema.js';
 import { ProjectPlanZod, ProjectPlanSchemaZod } from './schemas/plan.schema.js';
 import { MentorAnalysisResponse, MentorAnalysisResponseSchema } from './schemas/mentor.schema.js';
+import { VivaDefenseResponse, VivaDefenseResponseSchema } from './schemas/viva.schema.js';
 
 let groqInstance: Groq | null = null;
 
@@ -135,6 +136,47 @@ export class GroqAiService {
 
     return {
       analysis: validation.data,
+      modelUsed: env.GROQ_MODEL,
+    };
+  }
+
+  /**
+   * Generates project-specific Viva Voce final defense questions, traps, and model answers
+   */
+  static async generateVivaDefense(idea: {
+    title: string;
+    pitch: string;
+    intendedTech?: string;
+    targetAudience?: string;
+  }): Promise<{ defense: VivaDefenseResponse; modelUsed: string }> {
+    const groq = getGroqClient();
+
+    console.log(`🚀 [Groq AI] Calling live model: ${env.GROQ_MODEL} for Viva Defense Simulation...`);
+    const { system, user } = PromptBuilder.buildVivaDefensePrompt(idea);
+
+    const completion = await groq.chat.completions.create({
+      model: env.GROQ_MODEL,
+      messages: [
+        { role: 'system', content: system },
+        { role: 'user', content: user },
+      ],
+      response_format: { type: 'json_object' },
+      temperature: 0.65,
+      max_tokens: 3500,
+    });
+
+    const content = completion.choices[0]?.message?.content || '';
+    if (!content.trim()) {
+      throw new Error('Groq returned an empty response. Please check your API quota.');
+    }
+
+    const validation = AiValidator.validate(content, VivaDefenseResponseSchema);
+    if (!validation.success || !validation.data) {
+      throw new Error(`Groq viva defense validation failed: ${validation.error}`);
+    }
+
+    return {
+      defense: validation.data as VivaDefenseResponse,
       modelUsed: env.GROQ_MODEL,
     };
   }

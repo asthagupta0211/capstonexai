@@ -165,4 +165,61 @@ Perform a thorough architectural and evaluation critique of this project.`;
 
     return { system, user };
   }
+
+  /**
+   * Builds prompt for Viva Voce Final Defense Simulator
+   */
+  static buildVivaDefensePrompt(idea: {
+    title: string;
+    pitch: string;
+    intendedTech?: string;
+    targetAudience?: string;
+  }): { system: string; user: string } {
+    const system = `You are an exacting External Academic Examiner, University Defense Committee Head, and Principal Software Architect.
+Your task is to conduct a realistic, high-pressure Viva Voce (Final Project Defense) cross-examination for a student presenting their capstone project.
+
+CRITICAL INSTRUCTIONS:
+1. Return ONLY a valid, parseable JSON object matching the exact structure below. Do not wrap in markdown or conversational greetings.
+2. Every question must be TAILORED SPECIFICALLY to the student's project, stated technologies, and problem domain. Avoid generic questions like "How did you test your code?".
+3. Focus on:
+   - Architecture & Stack Justification (e.g. why choice X over standard alternative Y).
+   - Scalability, concurrency bottlenecks, and cold-start latency.
+   - Security vulnerabilities, data integrity, and failure handling.
+   - Algorithmic trade-offs (loss functions, dataset bias, ACID vs BASE).
+4. For each question, provide:
+   - "examinerIntent": What the examiner is really testing (e.g. assessing whether student actually wrote the code or copy-pasted).
+   - "trapToAvoid": The common amateur mistake students say that causes examiners to deduct marks.
+   - "modelAnswer": The exact, bulletproof technical response the student should present to score top marks.
+
+REQUIRED JSON FORMAT:
+{
+  "overallDefenseReadinessScore": 78,
+  "examinerPerspectiveSummary": "Summary of how a university committee will perceive this project scope",
+  "criticalVulnerabilities": [
+    "Vulnerability 1 that examiners will target immediately",
+    "Vulnerability 2 in the chosen stack or design"
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "question": "Specific, probing technical question directly citing their stack and pitch",
+      "category": "Architecture & Stack" | "Scalability & Performance" | "Security & Edge Cases" | "Data & Algorithmic Trade-offs" | "Academic Novelty",
+      "examinerIntent": "Underlying intention behind this cross-examination question",
+      "trapToAvoid": "Amateur answer or trap that leads to aggressive follow-ups",
+      "modelAnswer": "Comprehensive, technical, and confident model response to score maximum marks"
+    }
+  ]
+}`;
+
+    const user = `<STUDENT_CAPSTONE_DEFENSE>
+Project Title: ${idea.title}
+Concept Pitch: ${idea.pitch}
+Tech Stack: ${idea.intendedTech || 'Not specified'}
+Target Users / Domain: ${idea.targetAudience || 'General CS/IT'}
+</STUDENT_CAPSTONE_DEFENSE>
+
+Generate 5 rigorous, project-specific Viva defense questions with examiner traps and model defense answers.`;
+
+    return { system, user };
+  }
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bookmark, Sparkles, AlertTriangle, ArrowRight, CheckSquare, Square, Trash2, BrainCircuit, Zap, Rocket, Microscope, Clock, Star } from 'lucide-react';
+import { Bookmark, Sparkles, AlertTriangle, ArrowRight, CheckSquare, Square, Trash2, BrainCircuit, Zap, Rocket, Microscope, Clock, Star, GraduationCap } from 'lucide-react';
 import { ProjectIdea } from '../../types/index.js';
 import { MetricMeter } from '../../components/MetricMeter.js';
 
@@ -11,6 +11,7 @@ interface IdeaCardProps {
   isCompared: boolean;
   onToggleCompare: (idea: ProjectIdea) => void;
   onAnalyzeIdea?: (idea: ProjectIdea) => void;
+  onVivaPrep?: (idea: ProjectIdea) => void;
 }
 
 export const IdeaCard: React.FC<IdeaCardProps> = ({
@@ -21,6 +22,7 @@ export const IdeaCard: React.FC<IdeaCardProps> = ({
   isCompared,
   onToggleCompare,
   onAnalyzeIdea,
+  onVivaPrep,
 }) => {
   const getDifficultyBadge = () => {
     switch (idea.difficulty) {
@@ -227,6 +229,18 @@ export const IdeaCard: React.FC<IdeaCardProps> = ({
             >
               <BrainCircuit size={13} />
               <span>Critique</span>
+            </button>
+          )}
+
+          {onVivaPrep && (
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={() => onVivaPrep(idea)}
+              title="Rehearse External Committee Project Defense Questions"
+              style={{ color: 'var(--primary-light)', fontSize: '0.75rem' }}
+            >
+              <GraduationCap size={13} />
+              <span>Viva Prep</span>
             </button>
           )}
         </div>
