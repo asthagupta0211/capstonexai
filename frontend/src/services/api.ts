@@ -1,6 +1,10 @@
 import { StudentProfile, ProjectIdea, ProjectPlan, MentorReview, AuthUser } from '../types/index.js';
 
-const API_BASE = '/api/v1';
+// Base URL configuration: Supports Vercel frontend talking to Render backend via VITE_API_URL
+const RAW_API_URL = ((import.meta as any).env?.VITE_API_URL as string | undefined)?.trim() || '';
+const API_BASE = RAW_API_URL ? `${RAW_API_URL.replace(/\/+$/, '')}/api/v1` : '/api/v1';
+
+
 
 class ApiService {
   private token: string | null = null;
