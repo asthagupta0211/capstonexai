@@ -510,16 +510,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       </section>
 
       {/* Footer */}
-      <footer style={{ padding: '3rem 1rem 2rem', borderTop: '1px solid var(--border-subtle)', background: 'rgba(4, 7, 16, 0.95)', textAlign: 'center' }}>
+      <footer style={{ padding: '2rem 1rem', borderTop: '1px solid var(--border-subtle)', background: 'rgba(4, 7, 16, 0.95)', textAlign: 'center' }}>
         <div className="container">
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '0 0 0.5rem' }}>
-            Capstonex.AI — AI-Powered Project Idea Generator & Mentor for Final-Year Students
-          </p>
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
-            Powered by Groq Cloud SDK & MongoDB Atlas • Production-Grade Engineering
+          <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', margin: 0 }}>
+            © {new Date().getFullYear()} Capstonex.AI. All rights reserved.
           </p>
         </div>
       </footer>
+
 
       <style>{`
         @media (max-width: 768px) {
