@@ -107,24 +107,42 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({
             }}
           >
             {/* Top Bar */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-              <span className="badge badge-cyan">{idea.difficulty}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                <span className="badge badge-cyan">{idea.difficulty}</span>
+                {idea.id === highestFeasibility?.id && (
+                  <span className="badge badge-success" style={{ fontSize: '0.675rem' }}>
+                    🏆 Safest Implementation
+                  </span>
+                )}
+                {idea.id === highestImpact?.id && (
+                  <span className="badge badge-purple" style={{ fontSize: '0.675rem' }}>
+                    ⭐ Highest Impact
+                  </span>
+                )}
+                {idea.id === highestDemo?.id && (
+                  <span className="badge badge-indigo" style={{ fontSize: '0.675rem' }}>
+                    🚀 Best Demo Value
+                  </span>
+                )}
+              </div>
+
               <button
                 className="btn btn-ghost btn-sm"
                 onClick={() => onRemoveFromCompare(idea.id)}
                 title="Remove from comparison"
-                style={{ color: 'var(--text-muted)' }}
+                style={{ color: 'var(--text-muted)', padding: '0.25rem' }}
               >
                 <X size={16} />
               </button>
             </div>
 
             {/* Title & Pitch */}
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.5rem', color: '#ffffff', minHeight: '52px' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '0.5rem', color: '#ffffff', minHeight: '52px', lineHeight: 1.25 }}>
               {idea.title}
             </h3>
-            <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: '1.25rem', minHeight: '60px' }}>
-              {idea.pitch}
+            <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', marginBottom: '1.25rem', minHeight: '60px', lineHeight: 1.45, fontStyle: 'italic' }}>
+              "{idea.pitch}"
             </p>
 
             {/* Metrics Breakdown */}

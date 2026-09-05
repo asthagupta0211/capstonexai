@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrainCircuit, Send, AlertTriangle, CheckCircle, ShieldAlert, Sparkles, Lightbulb, History } from 'lucide-react';
+import { BrainCircuit, Send, AlertTriangle, CheckCircle, ShieldAlert, Sparkles, Lightbulb, History, Zap } from 'lucide-react';
 import { MentorReview } from '../../types/index.js';
 import { MetricMeter } from '../../components/MetricMeter.js';
 import { api } from '../../services/api.js';
@@ -13,6 +13,30 @@ interface MentorLabProps {
   } | null;
   onClearInitialIdea?: () => void;
 }
+
+const MENTOR_DEMO_PRESETS = [
+  {
+    name: 'Face Attendance',
+    title: 'Automated Student Attendance via Classroom Face Recognition',
+    pitch: 'A camera placed at the lecture hall entrance continuously scans faces and updates attendance databases to eliminate proxy marking.',
+    intendedTech: 'Python, OpenCV, Flask, MySQL',
+    targetAudience: 'University professors and academic registrar offices',
+  },
+  {
+    name: 'Health Blockchain',
+    title: 'Decentralized Electronic Health Records on Blockchain',
+    pitch: 'Store all diagnostic reports and medical histories on a smart contract blockchain ledger to give patients 100% control over their data.',
+    intendedTech: 'Solidity, React, Node.js, Web3.js, IPFS',
+    targetAudience: 'Hospitals, diagnostic labs, and chronic illness patients',
+  },
+  {
+    name: 'Smart Waste IoT',
+    title: 'AI Smart Dustbin with Automated Waste Segregation',
+    pitch: 'An IoT bin with ultrasonic sensors and computer vision camera that detects whether waste is wet, dry, or plastic and rotates internal flaps.',
+    intendedTech: 'Raspberry Pi, TensorFlow Lite, Python, Arduino',
+    targetAudience: 'Municipal corporations and smart campus facilities',
+  },
+];
 
 export const MentorLab: React.FC<MentorLabProps> = ({ initialIdea, onClearInitialIdea }) => {
   const [title, setTitle] = useState(initialIdea?.title || '');
@@ -39,7 +63,6 @@ export const MentorLab: React.FC<MentorLabProps> = ({ initialIdea, onClearInitia
     }
   }, [initialIdea]);
 
-
   const loadPastReviews = async () => {
     try {
       const data = await api.listMentorReviews();
@@ -47,6 +70,13 @@ export const MentorLab: React.FC<MentorLabProps> = ({ initialIdea, onClearInitia
     } catch {
       // Non-blocking
     }
+  };
+
+  const handleApplyPreset = (p: typeof MENTOR_DEMO_PRESETS[0]) => {
+    setTitle(p.title);
+    setPitch(p.pitch);
+    setIntendedTech(p.intendedTech);
+    setTargetAudience(p.targetAudience);
   };
 
   const handleAnalyze = async (e: React.FormEvent) => {
@@ -144,12 +174,37 @@ export const MentorLab: React.FC<MentorLabProps> = ({ initialIdea, onClearInitia
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           {/* Submission Card */}
-          <div className="glass-card" style={{ padding: '2rem' }}>
-            <div style={{ marginBottom: '1.25rem' }}>
-              <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Sparkles size={18} color="var(--primary)" />
-                <span>Submit Idea for Objective Stress-Testing</span>
-              </h3>
+          <div className="glass-card" style={{ padding: '2rem', borderTop: '3px solid var(--primary)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+              <div>
+                <h3 style={{ fontSize: '1.15rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Sparkles size={18} color="var(--primary)" />
+                  <span>Submit Idea for Objective Stress-Testing</span>
+                </h3>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
+                  Uncover hidden project flaws, evaluate grading feasibility, and identify how to avoid faculty rejection.
+                </p>
+              </div>
+
+              {/* Quick Demo Test Presets */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '0.725rem', color: 'var(--text-muted)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <Zap size={13} color="var(--warning)" />
+                  <span>Test Ideas:</span>
+                </span>
+                {MENTOR_DEMO_PRESETS.map((p) => (
+                  <button
+                    key={p.name}
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => handleApplyPreset(p)}
+                    style={{ fontSize: '0.725rem', padding: '0.3rem 0.6rem' }}
+                    title={`Test with ${p.title}`}
+                  >
+                    {p.name}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <form onSubmit={handleAnalyze}>
@@ -201,7 +256,11 @@ export const MentorLab: React.FC<MentorLabProps> = ({ initialIdea, onClearInitia
                 />
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.25rem', flexWrap: 'wrap', gap: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border-subtle)' }}>
+                <span style={{ fontSize: '0.775rem', color: 'var(--text-muted)' }}>
+                  Evaluates academic novelty, implementation bottlenecks, and thesis defense rubrics
+                </span>
+
                 <button
                   type="submit"
                   className="btn btn-primary"

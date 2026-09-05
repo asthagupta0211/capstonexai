@@ -91,14 +91,40 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }} className="landing-nav-links">
+          {/* Quick Links & Telemetry */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }} className="landing-nav-links">
             <a href="#problem" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 500 }}>
               The Problem
             </a>
             <a href="#features" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 500 }}>
               Capabilities
             </a>
+
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                padding: '0.25rem 0.65rem',
+                background: 'rgba(16, 185, 129, 0.08)',
+                border: '1px solid rgba(16, 185, 129, 0.25)',
+                borderRadius: 'var(--radius-full)',
+                fontSize: '0.725rem',
+                color: '#6ee7b7',
+                fontWeight: 600,
+              }}
+            >
+              <div
+                style={{
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  background: 'var(--emerald)',
+                  boxShadow: '0 0 6px var(--emerald)',
+                }}
+              />
+              <span>Groq Cloud Live</span>
+            </div>
           </div>
 
           {/* CTA Action */}

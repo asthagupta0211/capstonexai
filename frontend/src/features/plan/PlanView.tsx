@@ -62,6 +62,10 @@ export const PlanView: React.FC<PlanViewProps> = ({
     setTimeout(() => setCopiedJson(false), 2000);
   };
 
+  const totalTasks = plan.roadmapPhases.reduce((acc, p) => acc + (p.tasks?.length || 0), 0);
+  const completedCount = Object.values(completedTasks).filter(Boolean).length;
+  const completionPercentage = totalTasks > 0 ? Math.round((completedCount / totalTasks) * 100) : 0;
+
   return (
     <div style={{ marginTop: '1rem' }}>
       {/* Top Bar Navigation */}
@@ -300,14 +304,46 @@ export const PlanView: React.FC<PlanViewProps> = ({
 
       {/* SECTION 4: 10-PHASE DEVELOPMENT ROADMAP */}
       <div style={{ marginBottom: '2.5rem' }}>
-        <div style={{ marginBottom: '1rem' }}>
-          <h2 style={{ fontSize: '1.35rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Sparkles size={20} color="var(--warning)" />
-            <span>10-Phase Practical Capstone Roadmap</span>
-          </h2>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-            Track progress milestone by milestone throughout your senior semester. Check off deliverables as you build!
-          </p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+          <div>
+            <h2 style={{ fontSize: '1.35rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Sparkles size={20} color="var(--warning)" />
+              <span>10-Phase Practical Capstone Roadmap</span>
+            </h2>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+              Track progress milestone by milestone throughout your senior semester. Check off deliverables as you build!
+            </p>
+          </div>
+
+          {/* Interactive Progress Meter */}
+          <div
+            style={{
+              padding: '0.75rem 1.25rem',
+              borderRadius: 'var(--radius-sm)',
+              background: 'rgba(0, 0, 0, 0.45)',
+              border: '1px solid var(--border-glow)',
+              minWidth: '240px',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem', fontSize: '0.75rem' }}>
+              <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>Sprint Completion:</span>
+              <span style={{ color: 'var(--cyan)', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
+                {completedCount} / {totalTasks} ({completionPercentage}%)
+              </span>
+            </div>
+            <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: 'var(--radius-full)', overflow: 'hidden' }}>
+              <div
+                style={{
+                  width: `${completionPercentage}%`,
+                  height: '100%',
+                  background: 'linear-gradient(90deg, var(--primary), var(--cyan))',
+                  borderRadius: 'var(--radius-full)',
+                  transition: 'width 0.4s ease',
+                  boxShadow: '0 0 8px var(--cyan)',
+                }}
+              />
+            </div>
+          </div>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>

@@ -274,21 +274,44 @@ export const AuthPortal: React.FC<AuthPortalProps> = ({ onAuthenticated, onBackT
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '0.5rem',
+                boxShadow: '0 0 20px var(--primary-glow)',
               }}
             >
               {loading ? (
                 <span>Authenticating with MongoDB Atlas...</span>
               ) : mode === 'login' ? (
                 <>
-                  <span>Sign In</span>
+                  <span>Sign In to Studio</span>
                   <ArrowRight size={16} />
                 </>
               ) : (
                 <>
-                  <span>Create Account</span>
+                  <span>Create Capstone Account</span>
                   <ArrowRight size={16} />
                 </>
               )}
+            </button>
+
+            {/* Quick Demo Credentials */}
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => {
+                setEmail('hackathon.judge@capstonex.ai');
+                setPassword('Capstone2026!');
+                if (mode === 'register') setName('Evaluation Judge');
+              }}
+              style={{
+                width: '100%',
+                marginTop: '0.65rem',
+                fontSize: '0.775rem',
+                color: 'var(--cyan)',
+                border: '1px dashed rgba(6, 182, 212, 0.35)',
+              }}
+              title="Click to fill test credentials for immediate evaluation"
+            >
+              <Sparkles size={13} color="var(--warning)" />
+              <span>Fill Quick Test Credentials</span>
             </button>
           </form>
 

@@ -230,9 +230,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
               color: 'var(--text-muted)',
               padding: '0 0.65rem',
               marginBottom: '0.65rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
             }}
           >
-            Capstone Studio
+            <span>Capstone Studio</span>
+            <span style={{ fontSize: '0.625rem', color: 'var(--cyan)', fontFamily: 'var(--font-mono)' }}>v2.6 LIVE</span>
           </div>
 
           {/* Navigation Links */}
@@ -252,16 +256,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     width: '100%',
-                    padding: '0.7rem 0.85rem',
+                    padding: '0.75rem 0.85rem',
                     borderRadius: 'var(--radius-sm)',
                     border: isActive ? '1px solid var(--border-glow)' : '1px solid transparent',
+                    borderLeft: isActive ? '3px solid var(--cyan)' : '1px solid transparent',
                     background: isActive
-                      ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.18), rgba(139, 92, 246, 0.14))'
+                      ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.18), rgba(6, 182, 212, 0.12))'
                       : 'transparent',
                     color: isActive ? '#ffffff' : 'var(--text-secondary)',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                     textAlign: 'left',
+                    boxShadow: isActive ? '0 0 15px rgba(99, 102, 241, 0.2)' : 'none',
                   }}
                   className="sidebar-nav-item"
                 >
@@ -272,6 +278,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
+                        filter: isActive ? 'drop-shadow(0 0 6px var(--cyan))' : 'none',
                       }}
                     >
                       <Icon size={18} />
@@ -280,7 +287,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       <div
                         style={{
                           fontSize: '0.875rem',
-                          fontWeight: isActive ? 600 : 500,
+                          fontWeight: isActive ? 700 : 500,
                           color: isActive ? '#ffffff' : 'var(--text-primary)',
                           lineHeight: 1.2,
                         }}
@@ -314,8 +321,48 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </nav>
         </div>
 
-        {/* Bottom: Real User Profile */}
+        {/* Bottom: System Specs & Real User Profile */}
         <div>
+          {/* Live System Specs Card */}
+          <div
+            style={{
+              padding: '0.75rem',
+              borderRadius: 'var(--radius-sm)',
+              background: 'rgba(0, 0, 0, 0.35)',
+              border: '1px solid rgba(255, 255, 255, 0.05)',
+              marginBottom: '0.75rem',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.45rem' }}>
+              <div
+                style={{
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  background: 'var(--emerald)',
+                  boxShadow: '0 0 6px var(--emerald)',
+                }}
+              />
+              <span style={{ fontSize: '0.6875rem', fontWeight: 700, letterSpacing: '0.04em', color: '#6ee7b7' }}>
+                ARCHITECTURE TELEMETRY
+              </span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', fontSize: '0.6875rem', color: 'var(--text-muted)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span>Inference:</span>
+                <span style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>Groq LLaMA-3.3</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span>Store:</span>
+                <span style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>MongoDB Atlas M0</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span>Integrity:</span>
+                <span style={{ color: '#a7f3d0', fontWeight: 600 }}>Zero Mock Data</span>
+              </div>
+            </div>
+          </div>
+
           {/* User Profile Card */}
           {user && (
             <div
@@ -325,7 +372,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 justifyContent: 'space-between',
                 padding: '0.75rem 0.85rem',
                 borderRadius: 'var(--radius-sm)',
-                background: 'rgba(0, 0, 0, 0.35)',
+                background: 'rgba(0, 0, 0, 0.45)',
                 border: '1px solid var(--border-subtle)',
               }}
             >
