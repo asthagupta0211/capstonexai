@@ -127,4 +127,8 @@ const ProjectIdeaSchema = new Schema<IProjectIdea>(
   }
 );
 
+// Compound index for fast queries by user and saved state, sorted by creation date
+ProjectIdeaSchema.index({ userId: 1, isSaved: 1, createdAt: -1 });
+ProjectIdeaSchema.index({ userId: 1, createdAt: -1 });
+
 export const ProjectIdea = mongoose.model<IProjectIdea>('ProjectIdea', ProjectIdeaSchema);

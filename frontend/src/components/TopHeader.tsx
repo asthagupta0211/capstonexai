@@ -78,6 +78,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
           }}
           className="mobile-menu-toggle"
           title="Open Menu"
+          aria-label="Open Navigation Menu"
         >
           <Menu size={20} />
         </button>

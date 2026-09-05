@@ -147,3 +147,51 @@ h1, h2, h3, h4, h5, h6 {
 .animate-spin-slow {
   animation: spinSlow 8s linear infinite;
 }
+
+/* Accessibility (a11y) Enhancements */
+:focus-visible {
+  outline: 2px solid var(--primary-light, #818cf8);
+  outline-offset: 2px;
+}
+
+/* Screen reader only utility class for full a11y compliance */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Skip link for keyboard accessibility */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 10px;
+  background: var(--primary, #6366f1);
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: var(--radius-md, 8px);
+  z-index: 9999;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.2s ease-in-out;
+}
+
+.skip-link:focus {
+  top: 10px;
+}
+
+/* Reduced motion preference for full accessibility compliance */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

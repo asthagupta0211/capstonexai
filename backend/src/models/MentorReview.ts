@@ -100,4 +100,6 @@ const MentorReviewSchema = new Schema<IMentorReview>(
   }
 );
 
+MentorReviewSchema.index({ userId: 1, createdAt: -1 });
+
 export const MentorReview = mongoose.model<IMentorReview>('MentorReview', MentorReviewSchema);

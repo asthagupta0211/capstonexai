@@ -293,7 +293,7 @@ export const App: React.FC = () => {
           onOpenMobileSidebar={() => setIsSidebarOpenMobile(true)}
         />
 
-        <main style={{ flex: 1, padding: '2rem 1.5rem', maxWidth: '1350px', width: '100%', margin: '0 auto' }}>
+        <main id="main-content" tabIndex={-1} style={{ flex: 1, padding: '2rem 1.5rem', maxWidth: '1350px', width: '100%', margin: '0 auto', outline: 'none' }}>
           {/* System Note Banner if detected */}
           {errorMessage && (
             <div

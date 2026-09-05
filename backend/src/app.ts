@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import compression from 'compression';
 import { env } from './config/env.js';
 import { generalLimiter } from './middleware/rateLimiter.js';
 import { errorHandler } from './middleware/errorHandler.js';
@@ -12,6 +13,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export const app = express();
+
+// Enable HTTP response compression (gzip / deflate) for maximum network efficiency
+app.use(
+  compression({
+    level: 6,
+    threshold: 1024, // Compress responses above 1KB
+    filter: (req, res) => {
+      if (req.headers['x-no-compression']) return false;
+      return compression.filter(req, res);
+    },
+  })
+);
+
+// Enable strong ETags for HTTP 304 Not Modified caching
+app.set('etag', 'strong');
 
 // Security HTTP headers
 app.use(
