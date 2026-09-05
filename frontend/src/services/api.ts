@@ -1,10 +1,19 @@
 import { StudentProfile, ProjectIdea, ProjectPlan, MentorReview, AuthUser } from '../types/index.js';
 
-// Base URL configuration: Supports Vercel frontend talking to Render backend via VITE_API_URL
-const RAW_API_URL = ((import.meta as any).env?.VITE_API_URL as string | undefined)?.trim() || '';
-const API_BASE = RAW_API_URL ? `${RAW_API_URL.replace(/\/+$/, '')}/api/v1` : '/api/v1';
+// Base URL configuration: Auto-routes to Render in production or uses VITE_API_URL
+const getApiBase = (): string => {
+  const envUrl = ((import.meta as any).env?.VITE_API_URL as string | undefined)?.trim();
+  if (envUrl) {
+    return `${envUrl.replace(/\/+$/, '')}/api/v1`;
+  }
+  // If hosted on Vercel or any non-localhost domain, automatically connect to the live Render backend
+  if (typeof window !== 'undefined' && (window.location.hostname.includes('vercel.app') || (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'))) {
+    return 'https://capstonexai.onrender.com/api/v1';
+  }
+  return '/api/v1';
+};
 
-
+const API_BASE = getApiBase();
 
 class ApiService {
   private token: string | null = null;
@@ -41,14 +50,26 @@ class ApiService {
       headers,
     });
 
-    const data = await response.json();
+    const text = await response.text();
+    let data: any = null;
+    if (text) {
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = null;
+      }
+    }
 
-    if (!response.ok || data.success === false) {
-      throw new Error(data.error || `Request failed with status ${response.status}`);
+    if (!response.ok || !data || data.success === false) {
+      if (response.status === 405 || response.status === 404) {
+        throw new Error(`API endpoint unavailable (${response.status}). Connected to: ${API_BASE}`);
+      }
+      throw new Error(data?.error || `Request failed with status ${response.status}`);
     }
 
     return data.data;
   }
+
 
   // --- Health & Status ---
   async getHealth(): Promise<{ status: string; database: string; aiProvider: string }> {
