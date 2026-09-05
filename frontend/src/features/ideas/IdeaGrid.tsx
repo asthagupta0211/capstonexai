@@ -11,6 +11,7 @@ interface IdeaGridProps {
   comparedIdeas: ProjectIdea[];
   onToggleCompare: (idea: ProjectIdea) => void;
   onGoToComparison: () => void;
+  onAnalyzeIdea?: (idea: ProjectIdea) => void;
 }
 
 export const IdeaGrid: React.FC<IdeaGridProps> = ({
@@ -21,7 +22,9 @@ export const IdeaGrid: React.FC<IdeaGridProps> = ({
   comparedIdeas,
   onToggleCompare,
   onGoToComparison,
+  onAnalyzeIdea,
 }) => {
+
   const [filter, setFilter] = useState<'all' | 'feasibility' | 'impact' | 'saved'>('all');
 
   const filteredIdeas = ideas.filter((idea) => {
@@ -133,6 +136,7 @@ export const IdeaGrid: React.FC<IdeaGridProps> = ({
               onDelete={onDelete}
               isCompared={comparedIdeas.some((i) => i.id === idea.id)}
               onToggleCompare={onToggleCompare}
+              onAnalyzeIdea={onAnalyzeIdea}
             />
           ))}
         </div>

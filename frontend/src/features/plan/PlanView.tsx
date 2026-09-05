@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Download, CheckCircle2, Circle, Layers, Cpu, Database, Wrench, Shield, ArrowLeft, Sparkles, Check } from 'lucide-react';
+import { Download, CheckCircle2, Circle, Layers, Cpu, Database, Wrench, Shield, ArrowLeft, Sparkles, Check, BrainCircuit } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { ProjectIdea, ProjectPlan } from '../../types/index.js';
 import { api } from '../../services/api.js';
@@ -8,13 +8,16 @@ interface PlanViewProps {
   idea: ProjectIdea;
   plan: ProjectPlan;
   onGoBack: () => void;
+  onAnalyzeInMentor?: (idea: ProjectIdea) => void;
 }
 
 export const PlanView: React.FC<PlanViewProps> = ({
   idea,
   plan,
   onGoBack,
+  onAnalyzeInMentor,
 }) => {
+
   const [completedTasks, setCompletedTasks] = useState<Record<string, boolean>>({});
   const [isDownloading, setIsDownloading] = useState(false);
   const [copiedJson, setCopiedJson] = useState(false);
@@ -68,7 +71,19 @@ export const PlanView: React.FC<PlanViewProps> = ({
           <span>Back to Ideas</span>
         </button>
 
-        <div style={{ display: 'flex', gap: '0.6rem' }}>
+        <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+          {onAnalyzeInMentor && (
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={() => onAnalyzeInMentor(idea)}
+              style={{ color: 'var(--cyan)' }}
+              title="Send to AI Mentor Lab for faculty evaluation"
+            >
+              <BrainCircuit size={15} />
+              <span>Critique in Mentor Lab</span>
+            </button>
+          )}
+
           <button className="btn btn-secondary btn-sm" onClick={handleCopyJson}>
             {copiedJson ? <Check size={14} color="var(--success)" /> : null}
             <span>{copiedJson ? 'JSON Copied!' : 'Copy Spec JSON'}</span>

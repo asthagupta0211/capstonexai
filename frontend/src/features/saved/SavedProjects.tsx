@@ -11,6 +11,7 @@ interface SavedProjectsProps {
   comparedIdeas: ProjectIdea[];
   onToggleCompare: (idea: ProjectIdea) => void;
   onGoToGenerator: () => void;
+  onAnalyzeIdea?: (idea: ProjectIdea) => void;
 }
 
 export const SavedProjects: React.FC<SavedProjectsProps> = ({
@@ -21,7 +22,9 @@ export const SavedProjects: React.FC<SavedProjectsProps> = ({
   comparedIdeas,
   onToggleCompare,
   onGoToGenerator,
+  onAnalyzeIdea,
 }) => {
+
   const savedIdeas = ideas.filter((i) => i.isSaved);
 
   return (
@@ -54,6 +57,7 @@ export const SavedProjects: React.FC<SavedProjectsProps> = ({
               onDelete={onDelete}
               isCompared={comparedIdeas.some((i) => i.id === idea.id)}
               onToggleCompare={onToggleCompare}
+              onAnalyzeIdea={onAnalyzeIdea}
             />
           ))}
         </div>

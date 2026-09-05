@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bookmark, Sparkles, AlertTriangle, ArrowRight, CheckSquare, Square, Trash2 } from 'lucide-react';
+import { Bookmark, Sparkles, AlertTriangle, ArrowRight, CheckSquare, Square, Trash2, BrainCircuit } from 'lucide-react';
 import { ProjectIdea } from '../../types/index.js';
 import { MetricMeter } from '../../components/MetricMeter.js';
 
@@ -10,6 +10,7 @@ interface IdeaCardProps {
   onDelete: (id: string) => void;
   isCompared: boolean;
   onToggleCompare: (idea: ProjectIdea) => void;
+  onAnalyzeIdea?: (idea: ProjectIdea) => void;
 }
 
 export const IdeaCard: React.FC<IdeaCardProps> = ({
@@ -19,7 +20,9 @@ export const IdeaCard: React.FC<IdeaCardProps> = ({
   onDelete,
   isCompared,
   onToggleCompare,
+  onAnalyzeIdea,
 }) => {
+
   const getDifficultyBadge = () => {
     switch (idea.difficulty) {
       case 'Beginner':
@@ -143,13 +146,28 @@ export const IdeaCard: React.FC<IdeaCardProps> = ({
       )}
 
       {/* Footer CTA */}
-      <div style={{ marginTop: 'auto', paddingTop: '0.85rem', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <button
-          className="btn btn-outline btn-sm"
-          onClick={() => onToggleCompare(idea)}
-        >
-          {isCompared ? 'Selected for Compare' : 'Add to Compare'}
-        </button>
+      <div style={{ marginTop: 'auto', paddingTop: '0.85rem', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={() => onToggleCompare(idea)}
+            title={isCompared ? 'Remove from Comparison Matrix' : 'Add to Comparison Matrix'}
+          >
+            {isCompared ? 'Selected' : 'Compare'}
+          </button>
+
+          {onAnalyzeIdea && (
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={() => onAnalyzeIdea(idea)}
+              title="Critique this project in AI Mentor Lab"
+              style={{ color: 'var(--cyan)' }}
+            >
+              <BrainCircuit size={14} />
+              <span>Analyze</span>
+            </button>
+          )}
+        </div>
 
         <button
           className="btn btn-primary btn-sm"
@@ -160,6 +178,7 @@ export const IdeaCard: React.FC<IdeaCardProps> = ({
           <ArrowRight size={14} />
         </button>
       </div>
+
     </div>
   );
 };

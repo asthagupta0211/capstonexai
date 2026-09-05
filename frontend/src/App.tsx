@@ -18,10 +18,17 @@ export const App: React.FC = () => {
   // Navigation & View State
   const [viewMode, setViewMode] = useState<'landing' | 'studio' | 'auth'>('landing');
   const [activeTab, setActiveTab] = useState<'generator' | 'comparison' | 'mentor' | 'saved'>('generator');
+  const [returnToTab, setReturnToTab] = useState<'generator' | 'comparison' | 'mentor' | 'saved'>('generator');
   const [selectedPlanIdea, setSelectedPlanIdea] = useState<ProjectIdea | null>(null);
   const [currentPlan, setCurrentPlan] = useState<ProjectPlan | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSidebarOpenMobile, setIsSidebarOpenMobile] = useState(false);
+  const [mentorPreFillIdea, setMentorPreFillIdea] = useState<{
+    title: string;
+    pitch: string;
+    intendedTech?: string;
+    targetAudience?: string;
+  } | null>(null);
 
   // User & Data State
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -170,6 +177,7 @@ export const App: React.FC = () => {
   };
 
   const handleSelectPlan = async (idea: ProjectIdea) => {
+    setReturnToTab(activeTab);
     setSelectedPlanIdea(idea);
     try {
       const res = await api.getPlan(idea.id);
@@ -178,6 +186,18 @@ export const App: React.FC = () => {
       alert('Failed to load blueprint: ' + err.message);
       setSelectedPlanIdea(null);
     }
+  };
+
+  const handleAnalyzeIdeaInMentor = (idea: ProjectIdea) => {
+    setMentorPreFillIdea({
+      title: idea.title,
+      pitch: idea.pitch,
+      intendedTech: idea.techStackSummary?.join(', ') || '',
+      targetAudience: idea.targetUsers?.join(', ') || '',
+    });
+    setSelectedPlanIdea(null);
+    setCurrentPlan(null);
+    setActiveTab('mentor');
   };
 
   // While checking existing session
@@ -302,21 +322,22 @@ export const App: React.FC = () => {
             </div>
           )}
 
-          {/* TAB 1: IDEA GENERATOR (Showcase + Blueprint) */}
-          {activeTab === 'generator' && (
+          {/* RENDER PLAN VIEW (Accessible from any tab!) */}
+          {selectedPlanIdea && currentPlan ? (
+            <PlanView
+              idea={selectedPlanIdea}
+              plan={currentPlan}
+              onGoBack={() => {
+                setSelectedPlanIdea(null);
+                setCurrentPlan(null);
+                setActiveTab(returnToTab);
+              }}
+              onAnalyzeInMentor={handleAnalyzeIdeaInMentor}
+            />
+          ) : (
             <>
-              {selectedPlanIdea && currentPlan ? (
-                /* Plan View Mode */
-                <PlanView
-                  idea={selectedPlanIdea}
-                  plan={currentPlan}
-                  onGoBack={() => {
-                    setSelectedPlanIdea(null);
-                    setCurrentPlan(null);
-                  }}
-                />
-              ) : (
-                /* Standard Generator + Results Grid */
+              {/* TAB 1: IDEA GENERATOR (Showcase + Grid) */}
+              {activeTab === 'generator' && (
                 <>
                   {/* Hero Showcase */}
                   <div style={{ textAlign: 'center', marginBottom: '2.5rem', paddingTop: '0.5rem' }}>
@@ -389,37 +410,44 @@ export const App: React.FC = () => {
                       comparedIdeas={comparedIdeas}
                       onToggleCompare={handleToggleCompare}
                       onGoToComparison={() => setActiveTab('comparison')}
+                      onAnalyzeIdea={handleAnalyzeIdeaInMentor}
                     />
                   )}
                 </>
               )}
+
+              {/* TAB 2: MULTI-IDEA COMPARISON MATRIX */}
+              {activeTab === 'comparison' && (
+                <ComparisonMatrix
+                  ideas={comparedIdeas.length > 0 ? comparedIdeas : ideas.slice(0, 3)}
+                  onRemoveFromCompare={(id) => setComparedIdeas((prev) => prev.filter((i) => i.id !== id))}
+                  onSelectPlan={handleSelectPlan}
+                  onGoBack={() => setActiveTab('generator')}
+                />
+              )}
+
+              {/* TAB 3: AI MENTOR LAB */}
+              {activeTab === 'mentor' && (
+                <MentorLab
+                  initialIdea={mentorPreFillIdea}
+                  onClearInitialIdea={() => setMentorPreFillIdea(null)}
+                />
+              )}
+
+              {/* TAB 4: SAVED PORTFOLIO */}
+              {activeTab === 'saved' && (
+                <SavedProjects
+                  ideas={ideas}
+                  onSelectPlan={handleSelectPlan}
+                  onToggleSave={handleToggleSaveIdea}
+                  onDelete={handleDeleteIdea}
+                  comparedIdeas={comparedIdeas}
+                  onToggleCompare={handleToggleCompare}
+                  onGoToGenerator={() => setActiveTab('generator')}
+                  onAnalyzeIdea={handleAnalyzeIdeaInMentor}
+                />
+              )}
             </>
-          )}
-
-          {/* TAB 2: MULTI-IDEA COMPARISON MATRIX */}
-          {activeTab === 'comparison' && (
-            <ComparisonMatrix
-              ideas={comparedIdeas.length > 0 ? comparedIdeas : ideas.slice(0, 3)}
-              onRemoveFromCompare={(id) => setComparedIdeas((prev) => prev.filter((i) => i.id !== id))}
-              onSelectPlan={handleSelectPlan}
-              onGoBack={() => setActiveTab('generator')}
-            />
-          )}
-
-          {/* TAB 3: AI MENTOR LAB */}
-          {activeTab === 'mentor' && <MentorLab />}
-
-          {/* TAB 4: SAVED PORTFOLIO */}
-          {activeTab === 'saved' && (
-            <SavedProjects
-              ideas={ideas}
-              onSelectPlan={handleSelectPlan}
-              onToggleSave={handleToggleSaveIdea}
-              onDelete={handleDeleteIdea}
-              comparedIdeas={comparedIdeas}
-              onToggleCompare={handleToggleCompare}
-              onGoToGenerator={() => setActiveTab('generator')}
-            />
           )}
         </main>
 

@@ -4,11 +4,21 @@ import { MentorReview } from '../../types/index.js';
 import { MetricMeter } from '../../components/MetricMeter.js';
 import { api } from '../../services/api.js';
 
-export const MentorLab: React.FC = () => {
-  const [title, setTitle] = useState('');
-  const [pitch, setPitch] = useState('');
-  const [intendedTech, setIntendedTech] = useState('');
-  const [targetAudience, setTargetAudience] = useState('');
+interface MentorLabProps {
+  initialIdea?: {
+    title: string;
+    pitch: string;
+    intendedTech?: string;
+    targetAudience?: string;
+  } | null;
+  onClearInitialIdea?: () => void;
+}
+
+export const MentorLab: React.FC<MentorLabProps> = ({ initialIdea, onClearInitialIdea }) => {
+  const [title, setTitle] = useState(initialIdea?.title || '');
+  const [pitch, setPitch] = useState(initialIdea?.pitch || '');
+  const [intendedTech, setIntendedTech] = useState(initialIdea?.intendedTech || '');
+  const [targetAudience, setTargetAudience] = useState(initialIdea?.targetAudience || '');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [currentReview, setCurrentReview] = useState<MentorReview | null>(null);
   const [pastReviews, setPastReviews] = useState<MentorReview[]>([]);
@@ -17,6 +27,18 @@ export const MentorLab: React.FC = () => {
   useEffect(() => {
     loadPastReviews();
   }, []);
+
+  useEffect(() => {
+    if (initialIdea) {
+      setTitle(initialIdea.title || '');
+      setPitch(initialIdea.pitch || '');
+      setIntendedTech(initialIdea.intendedTech || '');
+      setTargetAudience(initialIdea.targetAudience || '');
+      setActiveSubTab('critique');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [initialIdea]);
+
 
   const loadPastReviews = async () => {
     try {
