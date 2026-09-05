@@ -234,15 +234,15 @@ export const App: React.FC = () => {
                           display: 'inline-flex',
                           alignItems: 'center',
                           gap: '0.5rem',
-                          padding: '0.35rem 0.9rem',
+                          padding: '0.35rem 0.85rem',
                           borderRadius: 'var(--radius-full)',
-                          background: 'rgba(99, 102, 241, 0.12)',
-                          border: '1px solid var(--border-glow)',
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          border: '1px solid var(--border-card)',
                           marginBottom: '1.25rem',
                         }}
                       >
-                        <Sparkles size={14} color="var(--primary)" />
-                        <span style={{ fontSize: '0.8125rem', color: '#a5b4fc', fontWeight: 600 }}>
+                        <Sparkles size={14} color="var(--primary-light)" />
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 550 }}>
                           Production Capstone Architect & AI Mentor
                         </span>
                       </div>

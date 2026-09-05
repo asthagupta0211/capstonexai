@@ -176,12 +176,12 @@ export const ProfileWizard: React.FC<ProfileWizardProps> = ({
   };
 
   return (
-    <div className="glass-card" style={{ padding: '2rem', borderTop: '3px solid var(--primary)' }}>
+    <div className="glass-card" style={{ padding: '2rem' }}>
       {/* Header & 1-Click Persona Bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <UserCheck size={22} color="var(--primary)" />
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <UserCheck size={20} color="var(--primary-light)" />
             <span>Student Profile & Project Constraints</span>
           </h2>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
@@ -328,7 +328,7 @@ export const ProfileWizard: React.FC<ProfileWizardProps> = ({
             {/* Selected Interests */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', minHeight: '34px', marginBottom: '0.75rem' }}>
               {formData.interests.map((interest) => (
-                <span key={interest} className="tag-pill" style={{ background: 'rgba(139, 92, 246, 0.25)', borderColor: 'var(--secondary)', color: '#ffffff' }}>
+                <span key={interest} className="tag-pill tag-pill-active" style={{ background: '#334155', borderColor: '#475569', color: '#f8fafc' }}>
                   {interest}
                   <X size={12} style={{ cursor: 'pointer' }} onClick={() => handleRemoveInterest(interest)} />
                 </span>
