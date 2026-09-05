@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { env } from '../config/env.js';
+import { logger } from '../utils/logger.js';
 
 export function errorHandler(
   err: any,
@@ -7,7 +8,7 @@ export function errorHandler(
   res: Response,
   next: NextFunction
 ): void {
-  console.error(`❌ [Internal Error] ${req.method} ${req.url}:`, err.message || err);
+  logger.error(`[Internal Error] ${req.method} ${req.url}:`, err.message || err);
 
   const statusCode = err.statusCode || err.status || 500;
   const userSafeMessage =

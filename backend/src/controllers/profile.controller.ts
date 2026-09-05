@@ -21,8 +21,8 @@ export class ProfileController {
         projectConstraints,
       } = req.body;
 
-      if (!skills || !Array.isArray(skills) || skills.length === 0) {
-        res.status(400).json({ success: false, error: 'At least one skill is required.' });
+      if (!skills || !Array.isArray(skills)) {
+        res.status(400).json({ success: false, error: 'Skills array is required.' });
         return;
       }
 

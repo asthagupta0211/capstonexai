@@ -1,12 +1,13 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, Suspense, lazy, useCallback } from 'react';
 import { Sparkles, Compass, BrainCircuit } from 'lucide-react';
 import { Sidebar } from './components/Sidebar.js';
 import { TopHeader } from './components/TopHeader.js';
 import { Footer } from './components/Footer.js';
 import { ProfileWizard } from './features/profile/ProfileWizard.js';
 import { IdeaGrid } from './features/ideas/IdeaGrid.js';
-import { StudentProfile, ProjectIdea, ProjectPlan, AuthUser } from './types/index.js';
-import { api } from './services/api.js';
+import { ProjectIdea } from './types/index.js';
+import { useAuthSession } from './hooks/useAuthSession.js';
+import { useIdeaStudio } from './hooks/useIdeaStudio.js';
 
 // High-Efficiency Code-Splitting: Lazy load non-immediate route modules
 const LandingPage = lazy(() => import('./features/landing/LandingPage.js').then((m) => ({ default: m.LandingPage })));
@@ -25,12 +26,8 @@ const SuspenseLoader: React.FC = () => (
 
 export const App: React.FC = () => {
   // Navigation & View State
-  const [viewMode, setViewMode] = useState<'landing' | 'studio' | 'auth'>('landing');
   const [activeTab, setActiveTab] = useState<'generator' | 'comparison' | 'mentor' | 'saved'>('generator');
   const [returnToTab, setReturnToTab] = useState<'generator' | 'comparison' | 'mentor' | 'saved'>('generator');
-  const [selectedPlanIdea, setSelectedPlanIdea] = useState<ProjectIdea | null>(null);
-  const [currentPlan, setCurrentPlan] = useState<ProjectPlan | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSidebarOpenMobile, setIsSidebarOpenMobile] = useState(false);
   const [mentorPreFillIdea, setMentorPreFillIdea] = useState<{
     title: string;
@@ -39,162 +36,46 @@ export const App: React.FC = () => {
     targetAudience?: string;
   } | null>(null);
 
-  // User & Data State
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [isAuthenticating, setIsAuthenticating] = useState(true);
-  const [profile, setProfile] = useState<StudentProfile>({
-    skills: [],
-    interests: [],
-    preferredDomain: '',
-    difficultyLevel: 'Intermediate',
-    availableWeeks: 12,
-    hoursPerWeek: 15,
-    preferredTech: [],
-    projectConstraints: [],
-  });
-  const [ideas, setIdeas] = useState<ProjectIdea[]>([]);
-  const [comparedIdeas, setComparedIdeas] = useState<ProjectIdea[]>([]);
-  const [isGenerating, setIsGenerating] = useState(false);
+  // Business Domain Hooks
+  const {
+    ideas,
+    setIdeas,
+    comparedIdeas,
+    setComparedIdeas,
+    isGenerating,
+    selectedPlanIdea,
+    currentPlan,
+    errorMessage,
+    setSelectedPlanIdea,
+    setCurrentPlan,
+    loadIdeas,
+    handleGenerateIdeas,
+    handleToggleSaveIdea,
+    handleDeleteIdea,
+    handleToggleCompare,
+    handleSelectPlan,
+    resetStudio,
+  } = useIdeaStudio();
 
-  // Initialize Session on Load
-  useEffect(() => {
-    initSession();
-  }, []);
+  const handleUserLoaded = useCallback(() => {
+    loadIdeas();
+  }, [loadIdeas]);
 
-  const initSession = async () => {
-    try {
-      if (api.getToken()) {
-        const me = await api.getMe();
-        if (me.user && me.user.email === 'student@demo.edu') {
-          // Clear legacy demo session
-          api.logout();
-          setUser(null);
-          setViewMode('landing');
-        } else {
-          setUser(me.user);
-          await loadUserData();
-          setViewMode('studio');
-        }
-      } else {
-        setUser(null);
-        setViewMode('landing');
-      }
-    } catch {
-      api.logout();
-      setUser(null);
-      setViewMode('landing');
-    } finally {
-      setIsAuthenticating(false);
-    }
-  };
-
-  const loadUserData = async () => {
-    try {
-      const p = await api.getProfile();
-      if (p.profile && p.profile.skills?.length > 0) {
-        setProfile(p.profile);
-      }
-      const ideaList = await api.listIdeas();
-      if (ideaList.ideas) {
-        setIdeas(ideaList.ideas);
-      }
-    } catch {
-      // Non-blocking
-    }
-  };
-
-  const handleAuthenticated = async (authenticatedUser: AuthUser) => {
-    setUser(authenticatedUser);
-    setViewMode('studio');
-    await loadUserData();
-  };
+  const {
+    user,
+    profile,
+    isAuthenticating,
+    viewMode,
+    setViewMode,
+    handleAuthenticated,
+    handleLogout: authLogout,
+    handleSaveProfile,
+  } = useAuthSession(handleUserLoaded);
 
   const handleLogout = () => {
-    api.logout();
-    setUser(null);
-    setIdeas([]);
-    setSelectedPlanIdea(null);
-    setCurrentPlan(null);
+    authLogout();
+    resetStudio();
     setActiveTab('generator');
-    setViewMode('landing');
-  };
-
-  const handleSaveProfile = async (newProfile: StudentProfile) => {
-    setProfile(newProfile);
-    try {
-      await api.saveProfile(newProfile);
-    } catch {
-      // Background save
-    }
-  };
-
-  const handleGenerateIdeas = async (targetProfile: StudentProfile) => {
-    try {
-      setErrorMessage(null);
-      setIsGenerating(true);
-      const res = await api.generateIdeas(targetProfile);
-      setIdeas(res.ideas);
-      setSelectedPlanIdea(null);
-      setCurrentPlan(null);
-      setActiveTab('generator');
-    } catch (err: any) {
-      setErrorMessage(err.message);
-      alert('Error generating ideas: ' + err.message);
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  const handleToggleSaveIdea = async (id: string) => {
-    try {
-      const res = await api.toggleSaveIdea(id);
-      setIdeas((prev) => prev.map((i) => (i.id === id ? { ...i, isSaved: res.idea.isSaved } : i)));
-      if (selectedPlanIdea?.id === id) {
-        setSelectedPlanIdea((prev) => (prev ? { ...prev, isSaved: res.idea.isSaved } : null));
-      }
-    } catch (err: any) {
-      alert('Failed to save idea: ' + err.message);
-    }
-  };
-
-  const handleDeleteIdea = async (id: string) => {
-    try {
-      await api.deleteIdea(id);
-      setIdeas((prev) => prev.filter((i) => i.id !== id));
-      setComparedIdeas((prev) => prev.filter((i) => i.id !== id));
-      if (selectedPlanIdea?.id === id) {
-        setSelectedPlanIdea(null);
-        setCurrentPlan(null);
-      }
-    } catch (err: any) {
-      alert('Failed to delete idea: ' + err.message);
-    }
-  };
-
-  const handleToggleCompare = (idea: ProjectIdea) => {
-    setComparedIdeas((prev) => {
-      const exists = prev.some((i) => i.id === idea.id);
-      if (exists) {
-        return prev.filter((i) => i.id !== idea.id);
-      }
-      if (prev.length >= 4) {
-        alert('You can compare a maximum of 4 project ideas simultaneously.');
-        return prev;
-      }
-      return [...prev, idea];
-    });
-  };
-
-  const handleSelectPlan = async (idea: ProjectIdea) => {
-    setReturnToTab(activeTab);
-    setSelectedPlanIdea(idea);
-    try {
-      const res = await api.getPlan(idea.id);
-      setCurrentPlan(res.plan);
-    } catch (err: any) {
-      alert('Failed to load blueprint: ' + err.message);
-      setSelectedPlanIdea(null);
-    }
   };
 
   const handleAnalyzeIdeaInMentor = (idea: ProjectIdea) => {
@@ -325,144 +206,151 @@ export const App: React.FC = () => {
                 <strong style={{ color: '#fca5a5' }}>System Notice: </strong>
                 <span style={{ fontSize: '0.85rem', color: '#ffffff' }}>{errorMessage}</span>
               </div>
-              <button
-                className="btn btn-ghost btn-sm"
-                onClick={() => setErrorMessage(null)}
-                style={{ fontSize: '0.75rem' }}
-              >
-                Dismiss
-              </button>
             </div>
           )}
 
           {/* RENDER PLAN VIEW (Accessible from any tab!) */}
           <Suspense fallback={<SuspenseLoader />}>
             {selectedPlanIdea && currentPlan ? (
-            <PlanView
-              idea={selectedPlanIdea}
-              plan={currentPlan}
-              onGoBack={() => {
-                setSelectedPlanIdea(null);
-                setCurrentPlan(null);
-                setActiveTab(returnToTab);
-              }}
-              onAnalyzeInMentor={handleAnalyzeIdeaInMentor}
-            />
-          ) : (
-            <>
-              {/* TAB 1: IDEA GENERATOR (Showcase + Grid) */}
-              {activeTab === 'generator' && (
-                <>
-                  {/* Hero Showcase */}
-                  <div style={{ textAlign: 'center', marginBottom: '2.5rem', paddingTop: '0.5rem' }}>
-                    <div
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        padding: '0.35rem 0.9rem',
-                        borderRadius: 'var(--radius-full)',
-                        background: 'rgba(99, 102, 241, 0.12)',
-                        border: '1px solid var(--border-glow)',
-                        marginBottom: '1.25rem',
-                      }}
-                    >
-                      <Sparkles size={14} color="var(--primary)" />
-                      <span style={{ fontSize: '0.8125rem', color: '#a5b4fc', fontWeight: 600 }}>
-                        Production Capstone Architect & AI Mentor
-                      </span>
-                    </div>
-
-                    <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '1rem' }}>
-                      Architect Your <span className="text-gradient">Final-Year Project</span> With AI
-                    </h1>
-
-                    <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', maxWidth: '680px', margin: '0 auto 1.75rem', lineHeight: 1.6 }}>
-                      Zero mock data. Powered live by <strong>Groq Cloud LLM</strong> and persisted in your <strong>MongoDB Atlas</strong> database.
-                      Generate personalized proposals, tiered MVP features, justified tech stacks, and practical 10-phase roadmaps.
-                    </p>
-
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-                      <button
-                        className="btn btn-primary btn-lg"
-                        onClick={() => {
-                          const el = document.getElementById('profile-wizard-section');
-                          el?.scrollIntoView({ behavior: 'smooth' });
+              <PlanView
+                idea={selectedPlanIdea}
+                plan={currentPlan}
+                onGoBack={() => {
+                  setSelectedPlanIdea(null);
+                  setCurrentPlan(null);
+                  setActiveTab(returnToTab);
+                }}
+                onAnalyzeInMentor={handleAnalyzeIdeaInMentor}
+              />
+            ) : (
+              <>
+                {/* TAB 1: IDEA GENERATOR (Showcase + Grid) */}
+                {activeTab === 'generator' && (
+                  <>
+                    {/* Hero Showcase */}
+                    <div style={{ textAlign: 'center', marginBottom: '2.5rem', paddingTop: '0.5rem' }}>
+                      <div
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          padding: '0.35rem 0.9rem',
+                          borderRadius: 'var(--radius-full)',
+                          background: 'rgba(99, 102, 241, 0.12)',
+                          border: '1px solid var(--border-glow)',
+                          marginBottom: '1.25rem',
                         }}
                       >
-                        <Compass size={18} />
-                        <span>Launch Project Wizard</span>
-                      </button>
+                        <Sparkles size={14} color="var(--primary)" />
+                        <span style={{ fontSize: '0.8125rem', color: '#a5b4fc', fontWeight: 600 }}>
+                          Production Capstone Architect & AI Mentor
+                        </span>
+                      </div>
 
-                      <button
-                        className="btn btn-secondary btn-lg"
-                        onClick={() => setActiveTab('mentor')}
-                      >
-                        <BrainCircuit size={18} color="var(--cyan)" />
-                        <span>Critique Existing Idea</span>
-                      </button>
+                      <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '1rem' }}>
+                        Architect Your <span className="text-gradient">Final-Year Project</span> With AI
+                      </h1>
+
+                      <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', maxWidth: '680px', margin: '0 auto 1.75rem', lineHeight: 1.6 }}>
+                        Zero mock data. Powered live by <strong>Groq Cloud LLM</strong> and persisted in your <strong>MongoDB Atlas</strong> database.
+                        Generate personalized proposals, tiered MVP features, justified tech stacks, and practical 10-phase roadmaps.
+                      </p>
+
+                      <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                        <button
+                          className="btn btn-primary btn-lg"
+                          onClick={() => {
+                            const el = document.getElementById('profile-wizard-section');
+                            el?.scrollIntoView({ behavior: 'smooth' });
+                          }}
+                        >
+                          <Compass size={18} />
+                          <span>Launch Project Wizard</span>
+                        </button>
+
+                        <button
+                          className="btn btn-secondary btn-lg"
+                          onClick={() => setActiveTab('mentor')}
+                        >
+                          <BrainCircuit size={18} color="var(--cyan)" />
+                          <span>Critique Existing Idea</span>
+                        </button>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Profile Onboarding Wizard */}
-                  <div id="profile-wizard-section">
-                    <ProfileWizard
-                      profile={profile}
-                      onSaveProfile={handleSaveProfile}
-                      onGenerateIdeas={handleGenerateIdeas}
-                      isGenerating={isGenerating}
-                    />
-                  </div>
+                    {/* Profile Onboarding Wizard */}
+                    <div id="profile-wizard-section">
+                      <ProfileWizard
+                        profile={profile}
+                        onSaveProfile={handleSaveProfile}
+                        onGenerateIdeas={(targetProfile) =>
+                          handleGenerateIdeas(targetProfile, () => {
+                            setSelectedPlanIdea(null);
+                            setCurrentPlan(null);
+                            setActiveTab('generator');
+                          })
+                        }
+                        isGenerating={isGenerating}
+                      />
+                    </div>
 
-                  {/* Generated Proposals Showcase */}
-                  {ideas.length > 0 && (
-                    <IdeaGrid
-                      ideas={ideas}
-                      onSelectPlan={handleSelectPlan}
-                      onToggleSave={handleToggleSaveIdea}
-                      onDelete={handleDeleteIdea}
-                      comparedIdeas={comparedIdeas}
-                      onToggleCompare={handleToggleCompare}
-                      onGoToComparison={() => setActiveTab('comparison')}
-                      onAnalyzeIdea={handleAnalyzeIdeaInMentor}
-                    />
-                  )}
-                </>
-              )}
+                    {/* Generated Proposals Showcase */}
+                    {ideas.length > 0 && (
+                      <IdeaGrid
+                        ideas={ideas}
+                        onSelectPlan={(idea) =>
+                          handleSelectPlan(idea, () => setReturnToTab(activeTab))
+                        }
+                        onToggleSave={handleToggleSaveIdea}
+                        onDelete={handleDeleteIdea}
+                        comparedIdeas={comparedIdeas}
+                        onToggleCompare={handleToggleCompare}
+                        onGoToComparison={() => setActiveTab('comparison')}
+                        onAnalyzeIdea={handleAnalyzeIdeaInMentor}
+                      />
+                    )}
+                  </>
+                )}
 
-              {/* TAB 2: MULTI-IDEA COMPARISON MATRIX */}
-              {activeTab === 'comparison' && (
-                <ComparisonMatrix
-                  ideas={comparedIdeas.length > 0 ? comparedIdeas : ideas.slice(0, 3)}
-                  onRemoveFromCompare={(id) => setComparedIdeas((prev) => prev.filter((i) => i.id !== id))}
-                  onSelectPlan={handleSelectPlan}
-                  onGoBack={() => setActiveTab('generator')}
-                />
-              )}
+                {/* TAB 2: MULTI-IDEA COMPARISON MATRIX */}
+                {activeTab === 'comparison' && (
+                  <ComparisonMatrix
+                    ideas={comparedIdeas.length > 0 ? comparedIdeas : ideas.slice(0, 3)}
+                    onRemoveFromCompare={(id) =>
+                      setComparedIdeas((prev) => prev.filter((i) => i.id !== id))
+                    }
+                    onSelectPlan={(idea) =>
+                      handleSelectPlan(idea, () => setReturnToTab(activeTab))
+                    }
+                    onGoBack={() => setActiveTab('generator')}
+                  />
+                )}
 
-              {/* TAB 3: AI MENTOR LAB */}
-              {activeTab === 'mentor' && (
-                <MentorLab
-                  initialIdea={mentorPreFillIdea}
-                  onClearInitialIdea={() => setMentorPreFillIdea(null)}
-                />
-              )}
+                {/* TAB 3: AI MENTOR LAB */}
+                {activeTab === 'mentor' && (
+                  <MentorLab
+                    initialIdea={mentorPreFillIdea}
+                    onClearInitialIdea={() => setMentorPreFillIdea(null)}
+                  />
+                )}
 
-              {/* TAB 4: SAVED PORTFOLIO */}
-              {activeTab === 'saved' && (
-                <SavedProjects
-                  ideas={ideas}
-                  onSelectPlan={handleSelectPlan}
-                  onToggleSave={handleToggleSaveIdea}
-                  onDelete={handleDeleteIdea}
-                  comparedIdeas={comparedIdeas}
-                  onToggleCompare={handleToggleCompare}
-                  onGoToGenerator={() => setActiveTab('generator')}
-                  onAnalyzeIdea={handleAnalyzeIdeaInMentor}
-                />
-              )}
-            </>
-          )}
+                {/* TAB 4: SAVED PORTFOLIO */}
+                {activeTab === 'saved' && (
+                  <SavedProjects
+                    ideas={ideas}
+                    onSelectPlan={(idea) =>
+                      handleSelectPlan(idea, () => setReturnToTab(activeTab))
+                    }
+                    onToggleSave={handleToggleSaveIdea}
+                    onDelete={handleDeleteIdea}
+                    comparedIdeas={comparedIdeas}
+                    onToggleCompare={handleToggleCompare}
+                    onGoToGenerator={() => setActiveTab('generator')}
+                    onAnalyzeIdea={handleAnalyzeIdeaInMentor}
+                  />
+                )}
+              </>
+            )}
           </Suspense>
         </main>
 

@@ -73,6 +73,26 @@ export const ProfileWizard: React.FC<ProfileWizardProps> = ({
   const [interestInput, setInterestInput] = useState('');
   const [loadingStep, setLoadingStep] = useState(0);
 
+  // Synchronize local form data if the user's persisted profile updates
+  useEffect(() => {
+    setFormData(profile);
+  }, [profile]);
+
+  const handleResetProfile = () => {
+    const cleared: StudentProfile = {
+      skills: [],
+      interests: [],
+      preferredDomain: '',
+      difficultyLevel: 'Intermediate',
+      availableWeeks: 12,
+      hoursPerWeek: 15,
+      preferredTech: [],
+      projectConstraints: [],
+    };
+    setFormData(cleared);
+    onSaveProfile(cleared);
+  };
+
   const loadingMessages = [
     'Synthesizing capstone concepts with Groq AI...',
     'Evaluating feasibility & committee grading criteria...',
@@ -188,6 +208,19 @@ export const ProfileWizard: React.FC<ProfileWizardProps> = ({
               <span>{p.name}</span>
             </button>
           ))}
+
+          {(formData.skills.length > 0 || formData.interests.length > 0) && (
+            <button
+              type="button"
+              className="btn btn-ghost btn-sm"
+              onClick={handleResetProfile}
+              style={{ fontSize: '0.725rem', padding: '0.3rem 0.6rem', color: 'var(--text-muted)' }}
+              title="Clear all selected skills and interests"
+            >
+              <RotateCcw size={12} />
+              <span>Clear</span>
+            </button>
+          )}
         </div>
       </div>
 

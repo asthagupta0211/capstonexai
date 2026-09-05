@@ -48,10 +48,9 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   return (
     <header
       style={{
-        height: '4.75rem',
+        height: '4.25rem',
         borderBottom: '1px solid var(--border-card)',
-        background: 'rgba(5, 8, 20, 0.85)',
-        backdropFilter: 'blur(20px)',
+        background: 'var(--bg-secondary)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -59,7 +58,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
         position: 'sticky',
         top: 0,
         zIndex: 40,
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.35)',
+        boxShadow: 'var(--shadow-sm)',
       }}
       className="top-header"
     >

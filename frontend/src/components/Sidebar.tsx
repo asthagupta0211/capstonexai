@@ -99,13 +99,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Main Sidebar Container */}
       <aside
         style={{
-          width: '270px',
+          width: '260px',
           height: '100vh',
           position: 'sticky',
           top: 0,
-          background: 'rgba(8, 11, 22, 0.95)',
-          backdropFilter: 'blur(20px)',
-          borderRight: '1px solid var(--border-subtle)',
+          background: 'var(--bg-secondary)',
+          borderRight: '1px solid var(--border-card)',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
@@ -113,7 +112,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
           zIndex: 100,
           transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
           flexShrink: 0,
-          boxShadow: '4px 0 24px rgba(0, 0, 0, 0.25)',
         }}
         className={`app-sidebar ${isOpenMobile ? 'open-mobile' : ''}`}
       >
@@ -142,17 +140,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
             >
               <div
                 style={{
-                  width: '38px',
-                  height: '38px',
+                  width: '36px',
+                  height: '36px',
                   borderRadius: 'var(--radius-sm)',
-                  background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
+                  background: 'var(--primary)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  boxShadow: '0 0 15px var(--primary-glow)',
                 }}
               >
-                <Sparkles size={20} color="#ffffff" />
+                <Sparkles size={18} color="#ffffff" />
               </div>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
