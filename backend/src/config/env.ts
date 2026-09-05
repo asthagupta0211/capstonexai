@@ -17,5 +17,8 @@ export const env = {
   GROQ_MODEL: process.env.GROQ_MODEL || 'openai/gpt-oss-120b',
   RATE_LIMIT_WINDOW_MS: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10),
   RATE_LIMIT_MAX_REQUESTS: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100', 10),
+  RENDER_EXTERNAL_URL: process.env.RENDER_EXTERNAL_URL || process.env.KEEP_ALIVE_URL || '',
+  KEEP_ALIVE_INTERVAL_MINUTES: parseInt(process.env.KEEP_ALIVE_INTERVAL_MINUTES || '10', 10),
   IS_PRODUCTION: process.env.NODE_ENV === 'production',
 };
+
