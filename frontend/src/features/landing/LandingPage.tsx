@@ -99,12 +99,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <a href="#features" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 500 }}>
               Capabilities
             </a>
-            <a href="#architecture" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 500 }}>
-              Architecture
-            </a>
-            <a href="#workflow" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 500 }}>
-              Roadmap
-            </a>
           </div>
 
           {/* CTA Action */}
@@ -408,96 +402,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </div>
       </section>
 
-      {/* SECTION 3: 10-PHASE ROADMAP */}
-      <section id="workflow" style={{ padding: '5rem 1rem', borderTop: '1px solid var(--border-subtle)', background: 'rgba(0, 0, 0, 0.25)' }}>
-        <div className="container">
-          <div style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto 3.5rem' }}>
+      {/* FINAL CTA SECTION */}
+      <section style={{ padding: '5rem 1rem', borderTop: '1px solid var(--border-subtle)' }}>
+        <div className="container" style={{ maxWidth: '800px', textAlign: 'center' }}>
+          <div className="glass-card" style={{ padding: '3.5rem 2rem', background: 'radial-gradient(circle at 50% 10%, rgba(99, 102, 241, 0.15), transparent 60%), var(--bg-card)' }}>
             <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.75rem' }}>
-              The 10-Phase Capstone Execution Roadmap
+              Ready to Architect Your Capstone?
             </h2>
-            <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)' }}>
-              Every generated blueprint comes with an explicit timeline, phase milestones, and deliverables.
+            <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: '600px', margin: '0 auto 2rem' }}>
+              Generate custom project proposals tailored to your skills, compare trade-offs, and start building with confidence.
             </p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
-            {[
-              { num: '01', title: 'Requirements & Survey', deliverable: 'Literature review & SRS' },
-              { num: '02', title: 'Architecture & Design', deliverable: 'System design & ERD' },
-              { num: '03', title: 'Database & Setup', deliverable: 'Schema migrations & config' },
-              { num: '04', title: 'Backend API Development', deliverable: 'REST endpoints & Auth' },
-              { num: '05', title: 'Frontend UI Implementation', deliverable: 'Responsive client views' },
-              { num: '06', title: 'AI & Algorithm Integration', deliverable: 'Trained model inference' },
-              { num: '07', title: 'Testing & Security Audit', deliverable: 'Unit tests & vulnerability scan' },
-              { num: '08', title: 'Deployment & CI/CD', deliverable: 'Docker image & live URL' },
-              { num: '09', title: 'Thesis & Documentation', deliverable: 'Formatted final report' },
-              { num: '10', title: 'Final Demo & Presentation', deliverable: 'Slide deck & live viva demo' },
-            ].map((p, i) => (
-              <div
-                key={i}
-                className="glass-card"
-                style={{ padding: '1.25rem', borderLeft: '3px solid var(--primary)' }}
-              >
-                <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--cyan)', marginBottom: '0.35rem' }}>
-                  Phase {p.num}
-                </div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#ffffff', marginBottom: '0.4rem' }}>
-                  {p.title}
-                </div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                  Deliverable: <span style={{ color: 'var(--text-secondary)' }}>{p.deliverable}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 4: REAL-WORLD ARCHITECTURE & ZERO MOCK DATA */}
-      <section id="architecture" style={{ padding: '5rem 1rem', borderTop: '1px solid var(--border-subtle)' }}>
-        <div className="container" style={{ maxWidth: '900px' }}>
-          <div className="glass-card" style={{ padding: '2.75rem', textAlign: 'center', background: 'radial-gradient(circle at 50% 10%, rgba(99, 102, 241, 0.15), transparent 60%), var(--bg-card)' }}>
-            <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--primary), var(--secondary))', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.25rem' }}>
-              <Database size={24} color="#ffffff" />
-            </div>
-
-            <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.75rem' }}>
-              Built for Production — Zero Mock Data
-            </h2>
-
-            <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: '680px', margin: '0 auto 2rem' }}>
-              Unlike generic student demos that rely on hardcoded JSON mocks, Capstonex is wired directly to production infrastructure:
-            </p>
-
-            <div className="grid-3" style={{ gap: '1rem', textAlign: 'left', marginBottom: '2rem' }}>
-              <div style={{ padding: '1rem', borderRadius: 'var(--radius-sm)', background: 'rgba(0, 0, 0, 0.3)', border: '1px solid var(--border-subtle)' }}>
-                <div style={{ fontWeight: 700, color: '#ffffff', fontSize: '0.875rem', marginBottom: '0.25rem' }}>
-                  Frontend
-                </div>
-                <div style={{ fontSize: '0.775rem', color: 'var(--text-secondary)' }}>
-                  React 19 + TypeScript + Vite with custom dark glassmorphic tokens.
-                </div>
-              </div>
-
-              <div style={{ padding: '1rem', borderRadius: 'var(--radius-sm)', background: 'rgba(0, 0, 0, 0.3)', border: '1px solid var(--border-subtle)' }}>
-                <div style={{ fontWeight: 700, color: '#ffffff', fontSize: '0.875rem', marginBottom: '0.25rem' }}>
-                  Backend API
-                </div>
-                <div style={{ fontSize: '0.775rem', color: 'var(--text-secondary)' }}>
-                  Node.js 24 + Express + TypeScript with BCrypt & JWT authentication.
-                </div>
-              </div>
-
-              <div style={{ padding: '1rem', borderRadius: 'var(--radius-sm)', background: 'rgba(0, 0, 0, 0.3)', border: '1px solid var(--border-subtle)' }}>
-                <div style={{ fontWeight: 700, color: '#ffffff', fontSize: '0.875rem', marginBottom: '0.25rem' }}>
-                  Cloud AI & DB
-                </div>
-                <div style={{ fontSize: '0.775rem', color: 'var(--text-secondary)' }}>
-                  Groq Cloud inference engine + MongoDB Atlas cloud cluster.
-                </div>
-              </div>
-            </div>
-
             <button
               className="btn btn-primary btn-lg"
               onClick={user ? onEnterStudio : onOpenAuth}
