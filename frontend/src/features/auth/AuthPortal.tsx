@@ -43,7 +43,10 @@ export const AuthPortal: React.FC<AuthPortalProps> = ({ onAuthenticated, onBackT
   };
 
   return (
-    <div
+    <main
+      id="main-content"
+      tabIndex={-1}
+      role="main"
       style={{
         minHeight: '100vh',
         display: 'flex',
@@ -53,6 +56,7 @@ export const AuthPortal: React.FC<AuthPortalProps> = ({ onAuthenticated, onBackT
         background: 'radial-gradient(circle at 50% 20%, rgba(99, 102, 241, 0.15), transparent 45%), radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.12), transparent 40%), var(--bg-primary)',
         position: 'relative',
         overflow: 'hidden',
+        outline: 'none',
       }}
     >
       {/* Decorative Glow Grid */}
@@ -217,11 +221,14 @@ export const AuthPortal: React.FC<AuthPortalProps> = ({ onAuthenticated, onBackT
           <form onSubmit={handleSubmit}>
             {mode === 'register' && (
               <div className="form-group" style={{ marginBottom: '1.15rem' }}>
-                <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <label htmlFor="auth-fullname" className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                   <User size={14} color="var(--primary)" />
                   <span>Full Name</span>
                 </label>
                 <input
+                  id="auth-fullname"
+                  name="fullname"
+                  autoComplete="name"
                   type="text"
                   className="form-input"
                   placeholder="e.g. Sarah Connor"
@@ -233,11 +240,14 @@ export const AuthPortal: React.FC<AuthPortalProps> = ({ onAuthenticated, onBackT
             )}
 
             <div className="form-group" style={{ marginBottom: '1.15rem' }}>
-              <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <label htmlFor="auth-email" className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                 <Mail size={14} color="var(--primary)" />
                 <span>Email Address</span>
               </label>
               <input
+                id="auth-email"
+                name="email"
+                autoComplete="email"
                 type="email"
                 className="form-input"
                 placeholder="name@university.edu"
@@ -248,11 +258,14 @@ export const AuthPortal: React.FC<AuthPortalProps> = ({ onAuthenticated, onBackT
             </div>
 
             <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-              <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <label htmlFor="auth-password" className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                 <Lock size={14} color="var(--primary)" />
                 <span>Password</span>
               </label>
               <input
+                id="auth-password"
+                name="password"
+                autoComplete={mode === 'register' ? 'new-password' : 'current-password'}
                 type="password"
                 className="form-input"
                 placeholder={mode === 'register' ? 'At least 6 characters' : 'Enter your password'}
@@ -334,6 +347,6 @@ export const AuthPortal: React.FC<AuthPortalProps> = ({ onAuthenticated, onBackT
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };

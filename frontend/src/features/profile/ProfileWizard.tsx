@@ -195,13 +195,15 @@ export const ProfileWizard: React.FC<ProfileWizardProps> = ({
         <div className="grid-2" style={{ gap: '1.5rem', marginBottom: '1.5rem' }}>
           {/* Skills Collection */}
           <div>
-            <label className="form-label">
+            <label htmlFor="profile-skill-input" className="form-label">
               <span>Your Current Technical Skills *</span>
               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>({formData.skills.length} selected)</span>
             </label>
 
             <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
               <input
+                id="profile-skill-input"
+                name="skillInput"
                 type="text"
                 className="form-input"
                 placeholder="Type skill & press Enter (e.g. Python, Docker)"
@@ -213,11 +215,13 @@ export const ProfileWizard: React.FC<ProfileWizardProps> = ({
                     handleAddSkill(skillInput);
                   }
                 }}
+                aria-label="Type technical skill"
               />
               <button
                 type="button"
                 className="btn btn-secondary btn-sm"
                 onClick={() => handleAddSkill(skillInput)}
+                aria-label="Add technical skill"
               >
                 <Plus size={16} />
               </button>
@@ -228,7 +232,7 @@ export const ProfileWizard: React.FC<ProfileWizardProps> = ({
               {formData.skills.map((skill) => (
                 <span key={skill} className="tag-pill tag-pill-active" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
                   {skill}
-                  <X size={12} style={{ cursor: 'pointer' }} onClick={() => handleRemoveSkill(skill)} />
+                  <X size={12} style={{ cursor: 'pointer' }} onClick={() => handleRemoveSkill(skill)} aria-label={`Remove skill ${skill}`} />
                 </span>
               ))}
               {formData.skills.length === 0 && (
@@ -246,6 +250,7 @@ export const ProfileWizard: React.FC<ProfileWizardProps> = ({
                   key={skill}
                   className="tag-pill tag-pill-clickable"
                   onClick={() => handleAddSkill(skill)}
+                  aria-label={`Add suggested skill ${skill}`}
                 >
                   + {skill}
                 </button>
@@ -255,13 +260,15 @@ export const ProfileWizard: React.FC<ProfileWizardProps> = ({
 
           {/* Interests Collection */}
           <div>
-            <label className="form-label">
+            <label htmlFor="profile-interest-input" className="form-label">
               <span>Domain Interests & Research Areas</span>
               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>({formData.interests.length} selected)</span>
             </label>
 
             <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
               <input
+                id="profile-interest-input"
+                name="interestInput"
                 type="text"
                 className="form-input"
                 placeholder="Type interest & press Enter (e.g. Healthcare, NLP)"
@@ -273,11 +280,13 @@ export const ProfileWizard: React.FC<ProfileWizardProps> = ({
                     handleAddInterest(interestInput);
                   }
                 }}
+                aria-label="Type domain interest"
               />
               <button
                 type="button"
                 className="btn btn-secondary btn-sm"
                 onClick={() => handleAddInterest(interestInput)}
+                aria-label="Add domain interest"
               >
                 <Plus size={16} />
               </button>
@@ -313,13 +322,16 @@ export const ProfileWizard: React.FC<ProfileWizardProps> = ({
         <div className="grid-3" style={{ gap: '1.5rem', marginBottom: '1.5rem' }}>
           {/* Domain Dropdown */}
           <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">
+            <label htmlFor="profile-domain-select" className="form-label">
               <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                 <Layers size={15} color="var(--cyan)" />
                 Preferred Domain
               </span>
             </label>
             <select
+              id="profile-domain-select"
+              name="preferredDomain"
+              aria-label="Preferred project domain"
               className="form-select"
               value={formData.preferredDomain}
               onChange={(e) => {
@@ -350,6 +362,7 @@ export const ProfileWizard: React.FC<ProfileWizardProps> = ({
                 <button
                   key={diff}
                   type="button"
+                  aria-pressed={formData.difficultyLevel === diff}
                   className={`btn btn-sm ${formData.difficultyLevel === diff ? 'btn-primary' : 'btn-secondary'}`}
                   onClick={() => {
                     const updated = { ...formData, difficultyLevel: diff };
@@ -366,7 +379,7 @@ export const ProfileWizard: React.FC<ProfileWizardProps> = ({
 
           {/* Timeline Sliders */}
           <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">
+            <label htmlFor="profile-timeline-range" className="form-label">
               <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                 <Clock size={15} color="var(--warning)" />
                 Available Timeline
@@ -377,6 +390,9 @@ export const ProfileWizard: React.FC<ProfileWizardProps> = ({
             </label>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               <input
+                id="profile-timeline-range"
+                name="availableWeeks"
+                aria-label="Project duration in weeks"
                 type="range"
                 className="form-range"
                 min="4"

@@ -150,8 +150,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <header
+      {/* Main Content Landmark for Screen Readers & Keyboard Skip Navigation */}
+      <main id="main-content" tabIndex={-1} role="main" style={{ outline: 'none' }}>
+        {/* Hero Section */}
+        <header
         style={{
           position: 'relative',
           padding: '6rem 1rem 5rem',
@@ -448,6 +450,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </div>
         </div>
       </section>
+      </main>
 
       {/* Footer */}
       <footer style={{ padding: '2rem 1rem', borderTop: '1px solid var(--border-subtle)', background: 'rgba(4, 7, 16, 0.95)', textAlign: 'center' }}>

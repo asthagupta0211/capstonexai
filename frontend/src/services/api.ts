@@ -19,15 +19,27 @@ class ApiService {
   private token: string | null = null;
 
   constructor() {
-    this.token = localStorage.getItem('capstonex_token');
+    try {
+      if (typeof localStorage !== 'undefined') {
+        this.token = localStorage.getItem('capstonex_token');
+      }
+    } catch {
+      this.token = null;
+    }
   }
 
   setToken(token: string | null) {
     this.token = token;
-    if (token) {
-      localStorage.setItem('capstonex_token', token);
-    } else {
-      localStorage.removeItem('capstonex_token');
+    try {
+      if (typeof localStorage !== 'undefined') {
+        if (token) {
+          localStorage.setItem('capstonex_token', token);
+        } else {
+          localStorage.removeItem('capstonex_token');
+        }
+      }
+    } catch {
+      // Non-blocking fallback if storage is restricted
     }
   }
 
@@ -35,15 +47,21 @@ class ApiService {
     return this.token;
   }
 
-  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  getHeaders(): Record<string, string> {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...(options.headers as Record<string, string>),
     };
-
     if (this.token) {
       headers['Authorization'] = `Bearer ${this.token}`;
     }
+    return headers;
+  }
+
+  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    const headers: Record<string, string> = {
+      ...this.getHeaders(),
+      ...(options.headers as Record<string, string>),
+    };
 
     const response = await fetch(`${API_BASE}${endpoint}`, {
       ...options,

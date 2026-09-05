@@ -7,12 +7,16 @@ import compression from 'compression';
 import { env } from './config/env.js';
 import { generalLimiter } from './middleware/rateLimiter.js';
 import { errorHandler } from './middleware/errorHandler.js';
+import { noSqlSanitizer } from './middleware/sanitize.js';
 import apiV1Routes from './routes/api.v1.routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export const app = express();
+
+// Security: Disable X-Powered-By header to obscure tech stack from fingerprinting scanners
+app.disable('x-powered-by');
 
 // Enable HTTP response compression (gzip / deflate) for maximum network efficiency
 app.use(
@@ -90,6 +94,9 @@ app.options('*', cors(corsOptions));
 // Request body parser with safe limits
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
+
+// NoSQL Injection & Prototype Pollution Sanitizer
+app.use(noSqlSanitizer);
 
 // General Rate Limiter
 app.use('/api', generalLimiter);

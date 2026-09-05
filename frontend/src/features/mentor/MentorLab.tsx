@@ -210,8 +210,10 @@ export const MentorLab: React.FC<MentorLabProps> = ({ initialIdea, onClearInitia
             <form onSubmit={handleAnalyze}>
               <div className="grid-2" style={{ gap: '1.25rem', marginBottom: '1.25rem' }}>
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label className="form-label">Project Title *</label>
+                  <label htmlFor="mentor-project-title" className="form-label">Project Title *</label>
                   <input
+                    id="mentor-project-title"
+                    name="projectTitle"
                     type="text"
                     className="form-input"
                     placeholder="e.g. Automated Smart Triage Assistant"
@@ -222,8 +224,10 @@ export const MentorLab: React.FC<MentorLabProps> = ({ initialIdea, onClearInitia
                 </div>
 
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label className="form-label">Intended Tech Stack (Optional)</label>
+                  <label htmlFor="mentor-intended-tech" className="form-label">Intended Tech Stack (Optional)</label>
                   <input
+                    id="mentor-intended-tech"
+                    name="intendedTech"
                     type="text"
                     className="form-input"
                     placeholder="e.g. React, Python, OpenCV, MongoDB"
@@ -234,8 +238,10 @@ export const MentorLab: React.FC<MentorLabProps> = ({ initialIdea, onClearInitia
               </div>
 
               <div className="form-group">
-                <label className="form-label">Project Pitch / Concept *</label>
+                <label htmlFor="mentor-pitch" className="form-label">Project Pitch / Concept *</label>
                 <textarea
+                  id="mentor-pitch"
+                  name="pitch"
                   className="form-textarea"
                   placeholder="Describe what your system does, who uses it, and how it works..."
                   value={pitch}
@@ -246,8 +252,10 @@ export const MentorLab: React.FC<MentorLabProps> = ({ initialIdea, onClearInitia
               </div>
 
               <div className="form-group">
-                <label className="form-label">Target Audience / Problem Context (Optional)</label>
+                <label htmlFor="mentor-target-audience" className="form-label">Target Audience / Problem Context (Optional)</label>
                 <input
+                  id="mentor-target-audience"
+                  name="targetAudience"
                   type="text"
                   className="form-input"
                   placeholder="e.g. Hospital emergency staff, campus shuttle operators"

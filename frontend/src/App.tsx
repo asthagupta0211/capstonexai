@@ -1,18 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Sparkles, Compass, BrainCircuit } from 'lucide-react';
 import { Sidebar } from './components/Sidebar.js';
 import { TopHeader } from './components/TopHeader.js';
 import { Footer } from './components/Footer.js';
-import { LandingPage } from './features/landing/LandingPage.js';
-import { AuthPortal } from './features/auth/AuthPortal.js';
 import { ProfileWizard } from './features/profile/ProfileWizard.js';
 import { IdeaGrid } from './features/ideas/IdeaGrid.js';
-import { ComparisonMatrix } from './features/comparison/ComparisonMatrix.js';
-import { PlanView } from './features/plan/PlanView.js';
-import { MentorLab } from './features/mentor/MentorLab.js';
-import { SavedProjects } from './features/saved/SavedProjects.js';
 import { StudentProfile, ProjectIdea, ProjectPlan, AuthUser } from './types/index.js';
 import { api } from './services/api.js';
+
+// High-Efficiency Code-Splitting: Lazy load non-immediate route modules
+const LandingPage = lazy(() => import('./features/landing/LandingPage.js').then((m) => ({ default: m.LandingPage })));
+const AuthPortal = lazy(() => import('./features/auth/AuthPortal.js').then((m) => ({ default: m.AuthPortal })));
+const ComparisonMatrix = lazy(() => import('./features/comparison/ComparisonMatrix.js').then((m) => ({ default: m.ComparisonMatrix })));
+const PlanView = lazy(() => import('./features/plan/PlanView.js').then((m) => ({ default: m.PlanView })));
+const MentorLab = lazy(() => import('./features/mentor/MentorLab.js').then((m) => ({ default: m.MentorLab })));
+const SavedProjects = lazy(() => import('./features/saved/SavedProjects.js').then((m) => ({ default: m.SavedProjects })));
+
+const SuspenseLoader: React.FC = () => (
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', flexDirection: 'column', gap: '0.75rem' }} role="status" aria-live="polite">
+    <div style={{ width: '32px', height: '32px', border: '3px solid rgba(99, 102, 241, 0.2)', borderTopColor: 'var(--cyan)', borderRadius: '50%', animation: 'spinSlow 0.8s linear infinite' }} />
+    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Loading Capstonex engine module...</span>
+  </div>
+);
 
 export const App: React.FC = () => {
   // Navigation & View State
@@ -237,27 +246,31 @@ export const App: React.FC = () => {
   // 1. Public Landing Page: Explains Project Purpose, Architecture & Capabilities
   if (viewMode === 'landing') {
     return (
-      <LandingPage
-        user={user}
-        onEnterStudio={() => {
-          if (user) {
-            setViewMode('studio');
-          } else {
-            setViewMode('auth');
-          }
-        }}
-        onOpenAuth={() => setViewMode('auth')}
-      />
+      <Suspense fallback={<SuspenseLoader />}>
+        <LandingPage
+          user={user}
+          onEnterStudio={() => {
+            if (user) {
+              setViewMode('studio');
+            } else {
+              setViewMode('auth');
+            }
+          }}
+          onOpenAuth={() => setViewMode('auth')}
+        />
+      </Suspense>
     );
   }
 
   // 2. Real Authentication Portal: Sign In & Registration with MongoDB Atlas
   if (viewMode === 'auth') {
     return (
-      <AuthPortal
-        onAuthenticated={handleAuthenticated}
-        onBackToLanding={() => setViewMode('landing')}
-      />
+      <Suspense fallback={<SuspenseLoader />}>
+        <AuthPortal
+          onAuthenticated={handleAuthenticated}
+          onBackToLanding={() => setViewMode('landing')}
+        />
+      </Suspense>
     );
   }
 
@@ -323,7 +336,8 @@ export const App: React.FC = () => {
           )}
 
           {/* RENDER PLAN VIEW (Accessible from any tab!) */}
-          {selectedPlanIdea && currentPlan ? (
+          <Suspense fallback={<SuspenseLoader />}>
+            {selectedPlanIdea && currentPlan ? (
             <PlanView
               idea={selectedPlanIdea}
               plan={currentPlan}
@@ -449,6 +463,7 @@ export const App: React.FC = () => {
               )}
             </>
           )}
+          </Suspense>
         </main>
 
         <Footer />

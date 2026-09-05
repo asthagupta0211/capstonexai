@@ -3,9 +3,14 @@ import { GenerationHistory } from '../models/GenerationHistory.js';
 import { isDbConnected } from '../config/db.js';
 import { GroqAiService } from '../ai/groqClient.js';
 import { IdeaService } from './idea.service.js';
+import { appCache } from '../utils/cache.js';
 
+/**
+ * Service managing 10-Phase Project Blueprint generation, retrieval, and Markdown exports.
+ * Uses caching and .lean() for zero hydration CPU overhead.
+ */
 export class PlanService {
-  private static ensureDbConnected() {
+  private static ensureDbConnected(): void {
     if (!isDbConnected()) {
       throw new Error(
         'Database is not connected. Please ensure your MONGODB_URI in .env is configured and pointing to your MongoDB Atlas cluster.'
@@ -15,18 +20,29 @@ export class PlanService {
 
   /**
    * Generates or fetches detailed project plan for an idea using live Groq LLM & MongoDB Atlas
+   *
+   * @param ideaId - Associated Project Idea ID
+   * @param userId - Requesting user ID
+   * @returns Generated or retrieved blueprint plan
    */
   static async generateOrGetPlan(ideaId: string, userId: string): Promise<{ plan: IProjectPlan; modelUsed: string }> {
     this.ensureDbConnected();
+
+    const cacheKey = `plan:${ideaId}`;
+    const cached = appCache.get<IProjectPlan>(cacheKey);
+    if (cached) {
+      return { plan: cached, modelUsed: 'in-memory-cache' };
+    }
 
     const idea = await IdeaService.getIdeaById(ideaId, userId);
     if (!idea) {
       throw new Error('Project idea not found or access denied.');
     }
 
-    // Check if plan already exists in MongoDB Atlas
-    const existing = await ProjectPlan.findOne({ ideaId });
+    // Check if plan already exists in MongoDB Atlas with .lean()
+    const existing = (await ProjectPlan.findOne({ ideaId }).lean()) as unknown as IProjectPlan | null;
     if (existing) {
+      appCache.set(cacheKey, existing, 120000); // 2 min cache
       return { plan: existing, modelUsed: 'cached-from-mongodb' };
     }
 
@@ -40,10 +56,13 @@ export class PlanService {
     });
     const latencyMs = Date.now() - startTime;
 
-    const created = await ProjectPlan.create({
+    const created = (await ProjectPlan.create({
       ideaId,
       ...plan,
-    });
+    })) as unknown as IProjectPlan;
+
+    // Cache the newly created plan
+    appCache.set(cacheKey, created, 120000);
 
     try {
       await GenerationHistory.create({
@@ -55,14 +74,18 @@ export class PlanService {
         latencyMs,
       });
     } catch {
-      // Non-blocking
+      // Non-blocking telemetry
     }
 
     return { plan: created, modelUsed };
   }
 
   /**
-   * Exports project plan as formatted Markdown
+   * Exports project plan as formatted Academic Markdown
+   *
+   * @param ideaId - Idea ID to export
+   * @param userId - Owner user ID
+   * @returns Formatted Markdown string ready for university thesis submission
    */
   static async exportPlanAsMarkdown(ideaId: string, userId: string): Promise<string> {
     this.ensureDbConnected();
